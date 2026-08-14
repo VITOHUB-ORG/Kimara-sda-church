@@ -1,23 +1,36 @@
 import type { Resource } from "@/lib/types";
 import { resourceMeta } from "@/lib/ministries";
 import { getI18n } from "@/lib/i18n/server";
+import {
+  IconBookOpen,
+  IconSunrise,
+  IconMic,
+  IconHeart,
+  IconSparkles,
+  IconDownload,
+  IconFile,
+  type IconProps,
+} from "@/lib/icons";
 
-const icons: Record<string, string> = {
-  "bible-study": "📖",
-  devotional: "🌅",
-  sermon: "🎙️",
-  prayer: "🙏",
-  testimony: "✨",
-  download: "⬇️",
+const typeIcons: Record<string, (props: IconProps) => React.ReactNode> = {
+  "bible-study": IconBookOpen,
+  devotional: IconSunrise,
+  sermon: IconMic,
+  prayer: IconHeart,
+  testimony: IconSparkles,
+  download: IconDownload,
 };
 
 export default async function ResourceCard({ resource }: { resource: Resource }) {
   const { t } = await getI18n();
   const meta = resourceMeta[resource.type];
+  const Icon = typeIcons[resource.type] || IconFile;
 
   return (
     <div className="flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
-      <span className="text-3xl">{icons[resource.type] || "📄"}</span>
+      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-navy-100/60 text-navy-800">
+        <Icon className="h-6 w-6" />
+      </span>
       <h3 className="mt-4 font-display text-lg font-bold text-navy-900">
         {resource.title}
       </h3>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { API_URL } from "@/lib/api";
 import { getToken } from "@/lib/admin";
+import { IconFile } from "@/lib/icons";
 
 interface UploadInputProps {
   name: string;
@@ -98,7 +99,8 @@ export default function UploadInput({
           rel="noreferrer"
           className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-navy-800 hover:text-gold-600"
         >
-          📄 Open uploaded PDF
+          <IconFile className="h-4 w-4" />
+          Open uploaded PDF
         </a>
       )}
     </div>

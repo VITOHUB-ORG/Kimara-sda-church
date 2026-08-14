@@ -5,6 +5,7 @@ import type { Event } from "@/lib/types";
 import { ministryMeta } from "@/lib/ministries";
 import { getYouTubeEmbed, isYouTubeUrl } from "@/lib/youtube";
 import { getI18n } from "@/lib/i18n/server";
+import { IconMapPin } from "@/lib/icons";
 import PageHeader from "@/components/site/PageHeader";
 import SiteImage from "@/components/site/SiteImage";
 
@@ -98,8 +99,9 @@ export default async function EventDetailPage({ params }: Props) {
                     <p className="font-display text-xs font-bold uppercase tracking-widest text-gray-500">
                       {t("eventDetail.location")}
                     </p>
-                    <p className="mt-2 font-semibold text-navy-900">
-                      📍 {event.location}
+                    <p className="mt-2 flex items-center gap-1.5 font-semibold text-navy-900">
+                      <IconMapPin className="h-4 w-4 shrink-0 text-gray-400" />
+                      {event.location}
                     </p>
                   </div>
                 )}

@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { getToken, clearToken, adminFetch } from "@/lib/admin";
+import {
+  IconGrid,
+  IconCalendar,
+  IconNewspaper,
+  IconBook,
+  IconChurch,
+  IconImage,
+  IconHeart,
+  IconSparkles,
+  IconMail,
+} from "@/lib/icons";
 
 interface Admin {
   id: string;
@@ -13,15 +24,15 @@ interface Admin {
 }
 
 const nav = [
-  { href: "/admin", label: "Dashboard", icon: "▤" },
-  { href: "/admin/events", label: "Events", icon: "📅" },
-  { href: "/admin/news", label: "News", icon: "📰" },
-  { href: "/admin/resources", label: "Resources", icon: "📚" },
-  { href: "/admin/ministries", label: "Ministries", icon: "⛪" },
-  { href: "/admin/gallery", label: "Gallery", icon: "🖼️" },
-  { href: "/admin/prayers", label: "Prayer Requests", icon: "🙏" },
-  { href: "/admin/testimonials", label: "Testimonies", icon: "✨" },
-  { href: "/admin/contact", label: "Messages", icon: "✉️" },
+  { href: "/admin", label: "Dashboard", Icon: IconGrid },
+  { href: "/admin/events", label: "Events", Icon: IconCalendar },
+  { href: "/admin/news", label: "News", Icon: IconNewspaper },
+  { href: "/admin/resources", label: "Resources", Icon: IconBook },
+  { href: "/admin/ministries", label: "Ministries", Icon: IconChurch },
+  { href: "/admin/gallery", label: "Gallery", Icon: IconImage },
+  { href: "/admin/prayers", label: "Prayer Requests", Icon: IconHeart },
+  { href: "/admin/testimonials", label: "Testimonies", Icon: IconSparkles },
+  { href: "/admin/contact", label: "Messages", Icon: IconMail },
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
@@ -125,7 +136,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                         : "text-navy-100 hover:bg-navy-800"
                     }`}
                   >
-                    <span className="shrink-0">{item.icon}</span>
+                    <span className="shrink-0">
+                      <item.Icon className="h-5 w-5" />
+                    </span>
                     <span className="truncate">{item.label}</span>
                   </Link>
                 );

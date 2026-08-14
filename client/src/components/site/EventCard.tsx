@@ -2,6 +2,7 @@ import type { Event } from "@/lib/types";
 import { ministryMeta } from "@/lib/ministries";
 import { getYouTubeThumbnail, isYouTubeUrl } from "@/lib/youtube";
 import { getI18n } from "@/lib/i18n/server";
+import { IconClock, IconMapPin } from "@/lib/icons";
 import Link from "next/link";
 import SiteImage from "./SiteImage";
 
@@ -84,14 +85,22 @@ export default async function EventCard({ event }: { event: Event }) {
         </p>
         <div className="mt-4 space-y-1 text-sm text-gray-500">
           {event.time ? (
-            <p className="font-semibold text-navy-800">🕐 {event.time}</p>
+            <p className="flex items-center gap-1.5 font-semibold text-navy-800">
+              <IconClock className="h-4 w-4 shrink-0" />
+              {event.time}
+            </p>
           ) : (
             <p>
               {formatDate(event.startDate)}
               {event.endDate && ` – ${formatDate(event.endDate)}`}
             </p>
           )}
-          {event.location && <p>📍 {event.location}</p>}
+          {event.location && (
+            <p className="flex items-center gap-1.5">
+              <IconMapPin className="h-4 w-4 shrink-0 text-gray-400" />
+              {event.location}
+            </p>
+          )}
         </div>
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           {isLive ? (
