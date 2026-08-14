@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-montserrat);
+  --font-display: var(--font-montserrat);
+}
+
+@theme {
+  /* Primary brand palette */
+  --color-navy-950: #0a1e3a;
+  --color-navy-900: #12355b;
+  --color-navy-800: #1d4e89;
+  --color-navy-700: #2a5c9e;
+  --color-navy-600: #3d74b8;
+  --color-navy-100: #e3ecf5;
+
+  /* Hope / Salvation */
+  --color-gold-600: #c9973a;
+  --color-gold-500: #d9a441;
+  --color-gold-400: #e3b95f;
+  --color-gold-100: #f7ebd2;
+
+  /* Ministry accents */
+  --color-adventurers: #3a7d44;
+  --color-pathfinders: #1d4e89;
+  --color-ambassadors: #e67e22;
+  --color-youngadults: #6b3fa0;
+  --color-senioryouth: #d9a441;
+  --color-mission: #8e3b46;
+  --color-teal: #26828e;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0a1e3a;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-montserrat), Arial, Helvetica, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-montserrat), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: #d9a441;
+  color: #12355b;
+}
+
+/* ---------------------------------------------------------------------------
+   Responsive image system
+   - Plain <img> never overflow or distort; they scale to their container.
+   - `.media-frame` is a relative, fixed-size card cell. Drop an <img> or a
+     SiteImage (next/image `fill`) inside and it crops to the frame via
+     object-fit: cover, keeping a stable shape before the image loads.
+   - Use aspect-ratio utilities (aspect-[16/9], aspect-square, ...) on the
+     frame so the box reserves space and prevents layout shift.
+   - Off-screen images lazy-load for faster first paint.
+--------------------------------------------------------------------------- */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.media-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-navy-100);
+}
+
+.media-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}

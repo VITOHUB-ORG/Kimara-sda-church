@@ -1,0 +1,14 @@
+{
+  "name": "sda-youth-ministry",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SDA Youth Ministry digital platform - full-stack CMS",
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "seed": "npm --prefix server run seed",
+    "test": "npm --prefix server test",
+    "build": "npm --prefix client run build"
+  }
+}
