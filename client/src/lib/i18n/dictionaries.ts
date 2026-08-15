@@ -358,10 +358,10 @@ const sw: Dictionary = {
     resources: "Chunguza Rasilimali",
     strip: [
       "MJUE KRISTO",
-      "KUEA IMANI",
+      "KUKUZA IMANI",
       "WATUMIKIE WENGINE",
       "ONGOZA KWA KUSUDI",
-      "SHIRIKI TUMAAKE",
+      "SHIRIKI TUMAINI LAKE",
     ],
   },
   home: {
@@ -389,7 +389,7 @@ const sw: Dictionary = {
     desc: "Kila kijana ana safari ya imani. Popote ulipo kwenye njia, kuna hatua inayofuata kwako katika Huduma ya Vijana.",
     steps: [
       { key: "GUNDUA", title: "Gundua", desc: "Mafunzo ya Biblia, ibada za asubuhi, mahubiri na rasilimali za kiroho kumkutanisha Kristo." },
-      { key: "KUEA", title: "Kua", desc: "Kufuata Kristo, uanafunzi, mipango ya vijana na fursa za kujifunza." },
+      { key: "KUKUZA", title: "Kukuzwa", desc: "Kufuata Kristo, uanafunzi, mipango ya vijana na fursa za kujifunza." },
       { key: "TUMIKIA", title: "Tumikia", desc: "Utumishi wa jamii, ufikiaji na shughuli za kibinadamu kwa vitendo." },
       { key: "ONGOZA", title: "Ongoza", desc: "Mafunzo ya uongozi, kambi, makongamano na fursa za huduma." },
       { key: "SHIRIKI", title: "Shiriki", desc: "Uinjilisti, ushuhuda, misheni na ufikiaji wa kidijiti kwa injili." },
@@ -494,7 +494,7 @@ const sw: Dictionary = {
       tagline: "Kama mishale mikononi mwa shujaa (Zaburi 127:4)",
       logoAlt: "I Will Go — mpango wa Kanisa la SDA duniani kote",
       p1:
-        "“I Will Go” ni mpango wa ujumbe wa Kanisa la Seventh-day Adventist kwa miaka mitano ijayo. “Kama mishale mikononi mwa shujaa” (Zaburi 127:4), vijana na watu wazima wache wetu wameumbwa na Mungu kupelekwa duniani kwa ujumbe wa malaika watatu (Ufunuo 14:6-12). Ujumbe huu wa haraka na wa kinabii ungemea juu ya Yesu kama Mwokozi wa dunia na zawadi yake ya bure ya uadilifu kwa imani.",
+        "“I Will Go” ni mpango wa ujumbe wa Kanisa la Seventh-day Adventist kwa miaka mitano ijayo. “Kama mishale mikononi mwa shujaa” (Zaburi 127:4), vijana na watu wazima wote wameumbwa na Mungu kupelekwa duniani kwa ujumbe wa malaika watatu (Ufunuo 14:6-12). Ujumbe huu wa haraka na wa kinabii ungemea juu ya Yesu kama Mwokozi wa dunia na zawadi yake ya bure ya uadilifu kwa imani.",
       p2:
         "Pia tunawaita vijana waende na kuwa “Mikono na miguu ya Yesu” katika makanisa yao ya eneo, kwenye vyuo, mijini, na pia katika nchi ambazo ujumbe haujafika duniani kote! Katika nyakati hizi ngumu, dunia inahitaji Waadventista zaidi kuliko hapo awali! Tunaomba kwa hamu kwamba kila kijana Mwadventista wa miaka 4 hadi 30 ajiunge na kanisa la ulimwengu kusema “I Will Go!”",
       cta: "Jiunge na harakishi",
