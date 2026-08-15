@@ -69,23 +69,26 @@ const en = {
       { key: "SHARE", title: "Share", desc: "Evangelism, testimony, mission and digital outreach for the gospel." },
     ],
   },
+
   watchLive: {
     badge: "Live Broadcast",
-    title1: "Tazama Ibada ya Leo —",
+    title1: "Watch Today's Service —",
     title2: "Live",
-    desc: "Usikose ibada! Kimara Youth Ministry inatangaza moja kwa moja kila juma kwenye YouTube.",
+    desc: "Don't miss out! Kimara Youth Ministry broadcasts live every week on YouTube.",
     schedule: [
-      { day: "Jumatano", time: "Midweek Service" },
-      { day: "Ijumaa", time: "Vespers / Maombi" },
-      { day: "Jumamosi", time: "Sabbath Worship" },
+      { day: "Wednesday", time: "Midweek Service" },
+      { day: "Friday", time: "Vespers / Prayers" },
+      { day: "Saturday", time: "Sabbath Worship" },
     ],
-    ctaLive: "Tazama Live Sasa",
-    ctaSubscribe: "Subscribe / Tazama YouTube",
-    ctaEvents: "Soma Ibada za Kuja",
+    ctaLive: "Watch Live Now",
+    ctaSubscribe: "Subscribe / Watch on YouTube",
+    ctaEvents: "View Upcoming Services",
     placeholderTitle: "Kimara Youth Ministry — Live",
     placeholderDesc:
-      "Tazama live ibada ya leo. Linapofika wakati wa ibada, stream itaonekana hapa.",
-  },
+      "Watch today's service live. When it's time for the service, the stream will appear here.",
+  }
+,
+
   cta: {
     eyebrow: "A Word of Hope",
     title: "Looking for Hope?",
@@ -346,7 +349,7 @@ const sw: Dictionary = {
   },
   hero: {
     eyebrow: "Youth Ministry · Kanisa la Seventh-day Adventist Kimara",
-    titlePart1: "Kuwaimarisha Vijana Kujua",
+    titlePart1: "Kuwaimarisha Vijana Kumjua",
     titlePart2: "Kristo",
     titlePart3: "Kuwatumikia Wengine",
     titlePart4: "na",
@@ -401,8 +404,8 @@ const sw: Dictionary = {
     title2: "Live",
     desc: "Usikose ibada! Kimara Youth Ministry inatangaza moja kwa moja kila juma kwenye YouTube.",
     schedule: [
-      { day: "Jumatano", time: "Huduma ya Kati ya Juma" },
-      { day: "Ijumaa", time: "Vespers / Maombi" },
+      { day: "Jumatano", time: "Huduma ya maombi Kati ya Juma" },
+      { day: "Ijumaa", time: "ibada Kufungua sabato" },
       { day: "Jumamosi", time: "Ibada ya Sabato" },
     ],
     ctaLive: "Tazama Live Sasa",
