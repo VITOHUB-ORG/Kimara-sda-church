@@ -121,7 +121,7 @@ const events = [
     startDate: new Date("2026-08-14"),
     time: "Every Wed · Fri · Sat",
     ministry: "senior-youth",
-    youtubeUrl: "https://www.youtube.com/@KimaraYouthMinistry",
+    youtubeUrl: "https://www.youtube.com/@kimarasdachurch6877",
     featured: true,
   },
   {

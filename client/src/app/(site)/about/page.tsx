@@ -1,4 +1,5 @@
 import PageHeader from "@/components/site/PageHeader";
+import IWillGo from "@/components/site/IWillGo";
 import { getI18n } from "@/lib/i18n/server";
 
 const valueColors = [
@@ -128,6 +129,8 @@ export default async function AboutPage() {
           </div>
         </div>
       </section>
+
+      <IWillGo variant="section" />
     </>
   );
 }

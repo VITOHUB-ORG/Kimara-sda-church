@@ -22,9 +22,6 @@ export const metadata: Metadata = {
   },
   description:
     "Empowering young people to know Christ, serve others, and share His hope. Tazama live ibada zetu kwenye YouTube.",
-  icons: {
-    icon: "/church-logo.png",
-  },
 };
 
 export default async function RootLayout({

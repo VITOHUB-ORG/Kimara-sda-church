@@ -44,7 +44,7 @@ app.use("/api/public/events", crudRoutes(Event, { publicOnly: true }));
 app.use("/api/public/news", crudRoutes(News, { publicOnly: true }));
 app.use("/api/public/resources", crudRoutes(Resource, { publicOnly: true }));
 app.use("/api/public/ministries", crudRoutes(Ministry, { publicOnly: true }));
-app.use("/api/public/gallery", crudRoutes(GalleryItem, { publicOnly: true }));
+app.use("/api/public/gallery", crudRoutes(GalleryItem, { publicOnly: true, publicFilter: {} }));
 app.use("/api/public/testimonials", crudRoutes(Testimony, { publicOnly: true, publicFilter: { approved: true } }));
 
 // Public submissions (no auth)

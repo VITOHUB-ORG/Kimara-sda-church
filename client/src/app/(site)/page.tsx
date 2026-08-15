@@ -11,6 +11,7 @@ import EventCard from "@/components/site/EventCard";
 import ResourceCard from "@/components/site/ResourceCard";
 import NewsCard from "@/components/site/NewsCard";
 import CTA from "@/components/site/CTA";
+import IWillGo from "@/components/site/IWillGo";
 import Link from "next/link";
 
 async function getData() {
@@ -37,6 +38,8 @@ export default async function HomePage() {
   return (
     <>
       <Hero />
+
+      <IWillGo />
 
       {/* Ministries */}
       <section className="bg-navy-100/40 py-20 sm:py-24">

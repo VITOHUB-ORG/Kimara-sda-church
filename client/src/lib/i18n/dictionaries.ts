@@ -162,6 +162,17 @@ const en = {
       ["Senior Youth", "All youth"],
       ["Mission & Evangelism", "All ages"],
     ],
+    iwillgo: {
+      eyebrow: "World Church Initiative",
+      title: "I Will Go",
+      tagline: "Like arrows in the hands of a warrior (Psalm 127:4)",
+      logoAlt: "I Will Go — Seventh-day Adventist world church initiative",
+      p1:
+        "“I Will Go” is the mission initiative of the Seventh-day Adventist Church for the next five years. “Like arrows in the hands of a warrior,” (Psalm 127:4) our youth and young adults are designed by God to be sent into the world with the three angels’ message (Revelation 14:6-12). This urgent and prophetic message lifts up Jesus as the world’s Savior and His free gift of righteousness by faith.",
+      p2:
+        "We also call upon young people to go and be the “Hands and feet of Jesus” in their local churches, on campuses, in the cities, as well as in the unreached countries of the world! In these trying times, the world needs Adventists more than ever! We fervently pray that every Seventh-day Adventist young person from ages 4 to 30 will join the world church in saying “I Will Go!”",
+      cta: "Join the movement",
+    },
   },
   ministriesPage: {
     eyebrow: "Find Your Place",
@@ -319,7 +330,7 @@ const sw: Dictionary = {
   site: {
     brand: "Kimara Youth Ministry",
     brandShort: "KIMARA YOUTH",
-    brandSub: "MINISTRY · KANISA LA SDA",
+    brandSub: "MINISTRY · KANISA LA KIMARA",
     tagline: "Mjue Kristo. Kueni Katika Imani. Tumikie Wengine. Shiriki Tumaini Lake.",
   },
   nav: {
@@ -334,7 +345,7 @@ const sw: Dictionary = {
     getInvolved: "Jiunge",
   },
   hero: {
-    eyebrow: "Kimara Youth Ministry · Kanisa la Seventh-day Adventist",
+    eyebrow: "Youth Ministry · Kanisa la Seventh-day Adventist Kimara",
     titlePart1: "Kuwaimarisha Vijana Kujua",
     titlePart2: "Kristo",
     titlePart3: "Kuwatumikia Wengine",
@@ -477,6 +488,17 @@ const sw: Dictionary = {
       ["Senior Youth", "Vijana Wote"],
       ["Misheni & Uinjilisti", "Umri Wote"],
     ],
+    iwillgo: {
+      eyebrow: "Mpango wa Kanisa la Ulimwengu",
+      title: "I Will Go",
+      tagline: "Kama mishale mikononi mwa shujaa (Zaburi 127:4)",
+      logoAlt: "I Will Go — mpango wa Kanisa la SDA duniani kote",
+      p1:
+        "“I Will Go” ni mpango wa ujumbe wa Kanisa la Seventh-day Adventist kwa miaka mitano ijayo. “Kama mishale mikononi mwa shujaa” (Zaburi 127:4), vijana na watu wazima wache wetu wameumbwa na Mungu kupelekwa duniani kwa ujumbe wa malaika watatu (Ufunuo 14:6-12). Ujumbe huu wa haraka na wa kinabii ungemea juu ya Yesu kama Mwokozi wa dunia na zawadi yake ya bure ya uadilifu kwa imani.",
+      p2:
+        "Pia tunawaita vijana waende na kuwa “Mikono na miguu ya Yesu” katika makanisa yao ya eneo, kwenye vyuo, mijini, na pia katika nchi ambazo ujumbe haujafika duniani kote! Katika nyakati hizi ngumu, dunia inahitaji Waadventista zaidi kuliko hapo awali! Tunaomba kwa hamu kwamba kila kijana Mwadventista wa miaka 4 hadi 30 ajiunge na kanisa la ulimwengu kusema “I Will Go!”",
+      cta: "Jiunge na harakishi",
+    },
   },
   ministriesPage: {
     eyebrow: "Pata Mahali Pako",
@@ -554,7 +576,7 @@ const sw: Dictionary = {
     channels: [
       { title: "Mkurugenzi wa Vijana", detail: "Ofisi kwa miadi" },
       { title: "Mahali pa Kanisa", detail: "Kanisa la Seventh-day Adventist" },
-      { title: "Shule ya Sabato", detail: "Kila Sabato, 9:30 ASB" },
+      { title: "Shule ya Sabato", detail: "Kila Sabato, 9:15 ASB" },
       { title: "Huduma za Vijana", detail: "Kila Sabato mchana" },
     ],
     noteLabel: "Jambo Muhimu",
