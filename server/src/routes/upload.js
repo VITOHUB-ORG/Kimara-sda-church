@@ -48,7 +48,10 @@ const uploadSingle = (req, res, next) =>
 router.post("/", requireAuth, uploadSingle, (req, res) => {
   if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
-  const base = process.env.CDN_BASE_URL || `${req.protocol}://${req.get("host")}`;
+  const base =
+    process.env.PUBLIC_URL !== undefined
+      ? process.env.PUBLIC_URL
+      : process.env.CDN_BASE_URL || `${req.protocol}://${req.get("host")}`;
   const url = `${base}/uploads/${req.file.filename}`;
   res.status(201).json({
     url,

@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const API_TARGET = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   images: {
     // Allow fetching from the local API server (localhost/private IP) in dev.
     // Next blocks private IPs by default as an SSRF safeguard.
@@ -21,6 +22,10 @@ const nextConfig: NextConfig = {
       {
         source: "/api/:path*",
         destination: `${API_TARGET}/api/:path*`,
+      },
+      {
+        source: "/uploads/:path*",
+        destination: `${API_TARGET}/uploads/:path*`,
       },
     ];
   },

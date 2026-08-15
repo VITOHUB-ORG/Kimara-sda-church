@@ -5,12 +5,14 @@ dotenv.config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
+const isAtlas = MONGODB_URI && MONGODB_URI.includes("mongodb+srv://");
+
 export const connectDB = async () => {
   try {
     await mongoose.connect(MONGODB_URI, {
       serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 45000,
-      tls: true,
+      tls: isAtlas,
       retryWrites: true,
       w: "majority",
       maxPoolSize: 10,
