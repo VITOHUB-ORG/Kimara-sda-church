@@ -52,7 +52,8 @@ router.post("/", requireAuth, uploadSingle, (req, res) => {
     process.env.PUBLIC_URL !== undefined
       ? process.env.PUBLIC_URL
       : process.env.CDN_BASE_URL || `${req.protocol}://${req.get("host")}`;
-  const url = `${base}/uploads/${req.file.filename}`;
+  const rawUrl = `${base}/uploads/${req.file.filename}`;
+  const url = rawUrl.replace(/^https?:\/\/[^/]+/, "");
   res.status(201).json({
     url,
     filename: req.file.filename,

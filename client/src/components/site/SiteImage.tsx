@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { normalizeImageSrc } from "@/lib/api";
 
 interface SiteImageProps {
   src: string;
@@ -24,9 +25,10 @@ export default function SiteImage({
   priority = false,
   objectPosition = "center",
 }: SiteImageProps) {
+  const normalized = normalizeImageSrc(src);
   return (
     <Image
-      src={src}
+      src={normalized}
       alt={alt}
       fill
       sizes={sizes}

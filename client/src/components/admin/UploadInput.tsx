@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { API_URL } from "@/lib/api";
+import { API_URL, normalizeImageSrc } from "@/lib/api";
 import { getToken } from "@/lib/admin";
 import { IconFile } from "@/lib/icons";
 
@@ -75,7 +75,9 @@ export default function UploadInput({
 
       <div className="mt-3">
         <input
-          type="url"
+          type="text"
+          inputMode="url"
+          autoComplete="off"
           name={name}
           value={url}
           onChange={(e) => setUrl(e.target.value)}
@@ -87,7 +89,7 @@ export default function UploadInput({
       {url && isImage && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={url}
+          src={normalizeImageSrc(url)}
           alt="Preview"
           className="mt-3 h-32 w-full rounded-xl border border-gray-200 object-cover"
         />

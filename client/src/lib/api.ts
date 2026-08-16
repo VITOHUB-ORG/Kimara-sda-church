@@ -4,6 +4,13 @@
 const SERVER_API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 export const API_URL = typeof window === "undefined" ? SERVER_API : "";
 
+export function normalizeImageSrc(src: string): string {
+  if (typeof src === "string" && src.startsWith(SERVER_API)) {
+    return src.slice(SERVER_API.length);
+  }
+  return src;
+}
+
 export async function apiGet<T>(path: string, revalidate?: number): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     next: revalidate ? { revalidate } : undefined,
