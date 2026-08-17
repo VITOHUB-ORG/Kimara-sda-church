@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { adminFetch } from "@/lib/admin";
 import type { Paginated } from "@/lib/api";
 import UploadInput from "./UploadInput";
+import MultiUploadInput from "./MultiUploadInput";
 
 export type FieldType =
   | "text"
@@ -14,6 +15,7 @@ export type FieldType =
   | "checkbox"
   | "url"
   | "image"
+  | "images"
   | "pdf";
 
 export interface Field {
@@ -113,6 +115,14 @@ export default function Manager<T extends object>({
 
       let value: unknown = el.value;
       if (field.type === "checkbox") value = (el as HTMLInputElement).checked;
+      if (field.type === "images") {
+        try {
+          const parsed = JSON.parse(el.value);
+          value = Array.isArray(parsed) ? parsed : [];
+        } catch {
+          value = [];
+        }
+      }
       if (field.type === "date" || field.type === "datetime") {
         value = el.value ? new Date(el.value).toISOString() : "";
       }
@@ -155,6 +165,15 @@ export default function Manager<T extends object>({
 
     if (field.type === "image") {
       return <UploadInput name={field.name} defaultValue={value} label="Upload image" accept="image/*" />;
+    }
+
+    if (field.type === "images") {
+      let images: string[] = [];
+      if (current !== "new") {
+        const raw = get(current, field.name);
+        if (Array.isArray(raw)) images = raw as string[];
+      }
+      return <MultiUploadInput name={field.name} defaultValue={images} label="Upload images" />;
     }
 
     if (field.type === "pdf") {

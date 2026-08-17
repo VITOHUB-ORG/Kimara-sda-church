@@ -8,8 +8,10 @@ const galleryItemSchema = new mongoose.Schema(
       enum: ["worship", "fellowship", "service", "mission", "leadership"],
       default: "fellowship",
     },
-    image: { type: String, required: true },
+    image: { type: String, default: "" },
+    images: { type: [String], default: [] },
     caption: { type: String, default: "" },
+    featured: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

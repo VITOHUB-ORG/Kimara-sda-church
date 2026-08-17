@@ -56,6 +56,10 @@ const en = {
     newsEyebrow: "Stay Informed",
     newsTitle: "News & Announcements",
     viewAllNews: "View all news",
+    galleryEyebrow: "Moments That Matter",
+    galleryTitle: "Highlights",
+    galleryDesc: "Worship, fellowship, service and mission — captured moments from youth ministry life.",
+    viewAllGallery: "View full gallery",
   },
   journey: {
     eyebrow: "Your Journey to Christ",
@@ -385,6 +389,10 @@ const sw: Dictionary = {
     newsEyebrow: "Endelea Kufahamishwa",
     newsTitle: "Habari na Matangazo",
     viewAllNews: "Angalia Habari Zote",
+    galleryEyebrow: "Wakati Muhimu",
+    galleryTitle: "Mambo Muhimu",
+    galleryDesc: "Ibada, ushirika, utumishi na misheni — nyakati za maisha ya huduma ya vijana.",
+    viewAllGallery: "Angalia Picha Zote",
   },
   journey: {
     eyebrow: "Safari Yako kwa Kristo",

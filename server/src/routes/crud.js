@@ -10,6 +10,15 @@ const cleanQuery = (query) => {
   return clean;
 };
 
+// Keep the cover `image` field in sync with the `images` array so legacy
+// consumers (thumbnails, list views) still work after multi-image support.
+const syncGalleryImages = (body) => {
+  if (!body || !Array.isArray(body.images)) return;
+  const images = body.images.filter((src) => typeof src === "string" && src.trim() !== "");
+  body.images = images;
+  body.image = images[0] || body.image || "";
+};
+
 export const crudRoutes = (Model, { publicOnly = false, publicFilter } = {}) => {
   const router = express.Router();
 
@@ -53,6 +62,7 @@ export const crudRoutes = (Model, { publicOnly = false, publicFilter } = {}) => 
       try {
         const body = { ...req.body };
         if ("title" in body) body.slug = slugify(body.title);
+        syncGalleryImages(body);
         const item = await Model.create(body);
         res.status(201).json(item);
       } catch (err) {
@@ -64,6 +74,7 @@ export const crudRoutes = (Model, { publicOnly = false, publicFilter } = {}) => 
       try {
         const body = { ...req.body };
         if (body.title) body.slug = slugify(body.title);
+        syncGalleryImages(body);
         const item = await Model.findByIdAndUpdate(req.params.id, body, { new: true, runValidators: true });
         if (!item) return res.status(404).json({ message: "Not found" });
         res.json(item);

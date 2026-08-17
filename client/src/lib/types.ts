@@ -74,7 +74,9 @@ export interface GalleryItem {
   title: string;
   category: "worship" | "fellowship" | "service" | "mission" | "leadership";
   image: string;
+  images?: string[];
   caption: string;
+  featured?: boolean;
 }
 
 export interface Testimony {
