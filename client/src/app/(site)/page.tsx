@@ -75,7 +75,7 @@ export default async function HomePage() {
               </Link>
             </div>
             <div className="mt-12">
-              <ImageCarousel slides={slides} />
+              <ImageCarousel slides={slides} aspect="aspect-[4/3] sm:aspect-[16/8]" />
             </div>
           </div>
         </section>

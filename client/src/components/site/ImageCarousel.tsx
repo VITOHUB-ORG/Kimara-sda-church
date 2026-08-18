@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { SyntheticEvent } from "react";
 import SiteImage from "./SiteImage";
 
 export interface CarouselSlide {
@@ -13,25 +12,20 @@ export interface CarouselSlide {
 
 interface ImageCarouselProps {
   slides: CarouselSlide[];
-  /** Fallback aspect ratio (width/height) used until each image's real size is known. */
-  aspect?: number;
+  /** Fixed aspect ratio of the slide frame, e.g. "aspect-[16/9]" or "aspect-[4/3] sm:aspect-[16/8]". */
+  aspect?: string;
   autoPlay?: boolean;
   interval?: number;
 }
 
-/** Keep the frame sane for extreme image shapes (very tall / very wide). */
-const MIN_RATIO = 0.75;
-const MAX_RATIO = 2.2;
-
 export default function ImageCarousel({
   slides,
-  aspect = 1.5,
+  aspect = "aspect-[4/3] sm:aspect-[16/8]",
   autoPlay = true,
   interval = 5000,
 }: ImageCarouselProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const [ratios, setRatios] = useState<(number | null)[]>(() => slides.map(() => null));
   const touchX = useRef<number | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -54,21 +48,6 @@ export default function ImageCarousel({
 
   if (count === 0) return null;
 
-  const rawRatio = ratios[index] ?? aspect;
-  const frameRatio = Math.min(MAX_RATIO, Math.max(MIN_RATIO, rawRatio));
-
-  const captureRatio = (i: number) => (e: SyntheticEvent<HTMLImageElement>) => {
-    const { naturalWidth, naturalHeight } = e.currentTarget;
-    if (!naturalWidth || !naturalHeight) return;
-    const ratio = naturalWidth / naturalHeight;
-    setRatios((prev) => {
-      if (prev[i] === ratio) return prev;
-      const next = [...prev];
-      next[i] = ratio;
-      return next;
-    });
-  };
-
   return (
     <div
       className="group relative overflow-hidden rounded-3xl shadow-lg"
@@ -90,7 +69,7 @@ export default function ImageCarousel({
       role="region"
       aria-label="Photo carousel"
     >
-      <div className="relative w-full" style={{ aspectRatio: `${frameRatio}`, transition: "aspect-ratio 0.6s ease" }}>
+      <div className={aspect}>
         <div
           className="flex h-full w-full transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${index * 100}%)` }}
@@ -100,8 +79,6 @@ export default function ImageCarousel({
               <SiteImage
                 src={slide.src}
                 alt={slide.alt}
-                fit="contain"
-                onLoad={captureRatio(i)}
                 sizes="(max-width: 768px) 100vw, 90vw"
                 priority={i === 0}
                 className="transition-transform duration-700 ease-out group-hover:scale-[1.03]"
