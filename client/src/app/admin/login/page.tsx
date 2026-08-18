@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { API_URL } from "@/lib/api";
-import { setToken } from "@/lib/admin";
+import { setToken, setRefreshToken } from "@/lib/admin";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,7 +28,8 @@ export default function LoginPage() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || "Login failed");
 
-      setToken(data.token);
+      setToken(data.accessToken);
+      setRefreshToken(data.refreshToken);
       router.replace("/admin");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");

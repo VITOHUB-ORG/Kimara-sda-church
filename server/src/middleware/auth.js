@@ -7,6 +7,9 @@ export const requireAuth = (req, res, next) => {
   }
   try {
     const payload = jwt.verify(header.split(" ")[1], process.env.JWT_SECRET);
+    if (payload.type !== "access") {
+      return res.status(401).json({ message: "Invalid or expired token" });
+    }
     req.admin = { id: payload.id, email: payload.email, role: payload.role };
     next();
   } catch (err) {

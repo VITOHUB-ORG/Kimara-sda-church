@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { getToken, clearToken, adminFetch } from "@/lib/admin";
+import { getToken, clearToken, revokeRefreshToken, adminFetch } from "@/lib/admin";
 import {
   IconGrid,
   IconCalendar,
@@ -35,12 +35,25 @@ const nav = [
   { href: "/admin/contact", label: "Messages", Icon: IconMail },
 ];
 
+const IDLE_MS =
+  (parseInt(process.env.NEXT_PUBLIC_ADMIN_IDLE_MINUTES || "15", 10) || 15) *
+  60 *
+  1000;
+
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [checking, setChecking] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Auto-logout after a period of inactivity (default 15 minutes).
+  const logoutTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const signOut = useCallback(() => {
+    if (logoutTimer.current) clearTimeout(logoutTimer.current);
+    revokeRefreshToken().finally(() => router.replace("/admin/login"));
+  }, [router]);
 
   useEffect(() => {
     if (!getToken()) {
@@ -55,6 +68,32 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       })
       .finally(() => setChecking(false));
   }, [router]);
+
+  // Inactivity timeout: reset on real user activity, log out when idle.
+  useEffect(() => {
+    const resetTimer = () => {
+      if (logoutTimer.current) clearTimeout(logoutTimer.current);
+      logoutTimer.current = setTimeout(signOut, IDLE_MS);
+    };
+
+    const events: (keyof WindowEventMap)[] = [
+      "mousemove",
+      "mousedown",
+      "keydown",
+      "touchstart",
+      "scroll",
+      "wheel",
+    ];
+    events.forEach((ev) => window.addEventListener(ev, resetTimer, { passive: true }));
+    document.addEventListener("visibilitychange", resetTimer);
+    resetTimer();
+
+    return () => {
+      if (logoutTimer.current) clearTimeout(logoutTimer.current);
+      events.forEach((ev) => window.removeEventListener(ev, resetTimer));
+      document.removeEventListener("visibilitychange", resetTimer);
+    };
+  }, [signOut]);
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
@@ -74,11 +113,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   if (!admin) return null;
-
-  const handleLogout = () => {
-    clearToken();
-    router.replace("/admin/login");
-  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -148,7 +182,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               <p className="truncate text-sm font-semibold">{admin.name}</p>
               <p className="truncate text-xs text-navy-100">{admin.email}</p>
               <button
-                onClick={handleLogout}
+                onClick={signOut}
                 className="mt-3 w-full rounded-lg border border-navy-700 px-4 py-2 text-xs font-bold uppercase tracking-wide text-navy-100 transition-colors hover:bg-navy-800"
               >
                 Sign out

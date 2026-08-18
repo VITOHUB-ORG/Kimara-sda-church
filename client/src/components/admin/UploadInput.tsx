@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { API_URL, normalizeImageSrc } from "@/lib/api";
-import { getToken } from "@/lib/admin";
+import { getToken, refreshAccessToken } from "@/lib/admin";
 import { IconFile } from "@/lib/icons";
 
 interface UploadInputProps {
@@ -33,11 +33,18 @@ export default function UploadInput({
     form.append("file", file);
 
     try {
-      const res = await fetch(`${API_URL}/api/upload`, {
+      let res = await fetch(`${API_URL}/api/upload`, {
         method: "POST",
         headers: { Authorization: `Bearer ${getToken()}` },
         body: form,
       });
+      if (res.status === 401 && (await refreshAccessToken())) {
+        res = await fetch(`${API_URL}/api/upload`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${getToken()}` },
+          body: form,
+        });
+      }
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Upload failed");
       setUrl(data.url);

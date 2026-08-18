@@ -20,8 +20,28 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
-app.use(express.json());
+const CORS_ORIGIN = process.env.CORS_ORIGIN;
+
+app.use(
+  cors(
+    CORS_ORIGIN
+      ? {
+          origin: CORS_ORIGIN.split(",").map((o) => o.trim()),
+          credentials: false,
+        }
+      : undefined
+  )
+);
+app.use(express.json({ limit: "2mb" }));
+
+// Basic security headers (no extra dependency needed)
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  next();
+});
 
 // Serve uploaded files (images + PDFs) with long cache for fast repeat loads
 app.use(

@@ -46,7 +46,7 @@ const loginRes = await fetch(BASE + "/api/auth/login", {
   body: JSON.stringify({ email: "admin@test.org", password: "TestPass123" }),
 });
 const login = await loginRes.json();
-check("login returns token", loginRes.ok && !!login.token);
+check("login returns access + refresh token", loginRes.ok && !!login.accessToken && !!login.refreshToken);
 
 // 4. Wrong password rejected
 const badRes = await fetch(BASE + "/api/auth/login", {
@@ -56,8 +56,30 @@ const badRes = await fetch(BASE + "/api/auth/login", {
 });
 check("wrong password rejected (401)", badRes.status === 401);
 
-const token = login.token;
+const token = login.accessToken;
 const auth = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+
+// 4b. Refresh token rotates and returns a fresh access token
+const refreshRes = await fetch(BASE + "/api/auth/refresh", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ refreshToken: login.refreshToken }),
+});
+const refreshed = await refreshRes.json();
+check("refresh returns new access + refresh token", refreshRes.ok && !!refreshed.accessToken && !!refreshed.refreshToken);
+
+// 4c. Used refresh token is revoked (reuse must fail)
+const reuseRes = await fetch(BASE + "/api/auth/refresh", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ refreshToken: login.refreshToken }),
+});
+check("reused refresh token rejected (401)", reuseRes.status === 401);
+
+// 4d. Refreshed access token works
+const auth2 = { Authorization: `Bearer ${refreshed.accessToken}`, "Content-Type": "application/json" };
+const meRes = await fetch(BASE + "/api/auth/me", { headers: auth2 });
+check("refreshed access token authorized", meRes.ok);
 
 // 5. Public endpoints without auth
 for (const path of ["/api/public/ministries", "/api/public/events", "/api/public/news", "/api/public/resources"]) {
@@ -131,7 +153,7 @@ const upNoAuth = await fetch(BASE + "/api/upload", {
 check("upload without token rejected (401)", upNoAuth.status === 401);
 
 // 8e. Uploaded file is served statically
-const fileRes = await fetch(up.url);
+const fileRes = await fetch(BASE + up.url);
 check("uploaded file served statically (200)", fileRes.ok && fileRes.headers.get("content-type").includes("image"));
 
 // 8f. Reject non-image/pdf upload
@@ -205,6 +227,20 @@ await fetch(BASE + "/api/admin/testimonials/" + t._id, {
 const tPub2 = await fetch(BASE + "/api/public/testimonials");
 const tPubData2 = await tPub2.json();
 check("approved testimony appears publicly", tPubData2.items.some((x) => x._id === t._id));
+
+// 15. Logout revokes the refresh token
+const logoutRes = await fetch(BASE + "/api/auth/logout", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ refreshToken: refreshed.refreshToken }),
+});
+check("logout succeeds", logoutRes.ok);
+const afterLogout = await fetch(BASE + "/api/auth/refresh", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ refreshToken: refreshed.refreshToken }),
+});
+check("revoked refresh token rejected after logout (401)", afterLogout.status === 401);
 
 console.log(failures === 0 ? "\nALL TESTS PASSED" : `\n${failures} TEST(S) FAILED`);
 await mongod.stop();

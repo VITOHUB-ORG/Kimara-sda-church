@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@/lib/i18n/client";
 import LanguageSwitcher from "./LanguageSwitcher";
+import PwaInstallButton from "./PwaInstallButton";
 
 const navKeys = [
   { href: "/", key: "home" },
@@ -67,10 +68,14 @@ export default function Header() {
           >
             {t("nav.getInvolved")}
           </Link>
+          <div className="ml-2">
+            <PwaInstallButton />
+          </div>
         </nav>
 
         <div className="flex items-center gap-2 lg:hidden">
           <LanguageSwitcher />
+          <PwaInstallButton />
           <button
             type="button"
             aria-label="Toggle menu"
