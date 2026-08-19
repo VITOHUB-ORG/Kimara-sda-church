@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import { getLang } from "@/lib/i18n/server";
 import { I18nProvider } from "@/lib/i18n/client";
 import PwaRegister from "@/components/site/PwaRegister";
+import PwaInstallPrompt from "@/components/site/PwaInstallPrompt";
 import "./globals.css";
 
 // The active language is read from a cookie at request time. Force dynamic
@@ -59,6 +60,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <I18nProvider lang={lang}>{children}</I18nProvider>
         <PwaRegister />
+        <PwaInstallPrompt />
       </body>
     </html>
   );

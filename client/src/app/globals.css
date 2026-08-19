@@ -30,6 +30,21 @@
   --color-teal: #26828e;
 }
 
+@theme {
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #0a1e3a;
