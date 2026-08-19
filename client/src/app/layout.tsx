@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
+import Script from "next/script";
 import { getLang } from "@/lib/i18n/server";
 import { I18nProvider } from "@/lib/i18n/client";
 import PwaRegister from "@/components/site/PwaRegister";
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   },
   description:
     "Empowering young people to know Christ, serve others, and share His hope. Tazama live ibada zetu kwenye YouTube.",
-  manifest: "/manifest.webmanifest",
+  manifest: "/manifest.json",
   icons: {
     icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
     apple: "/icons/apple-touch-icon.png",
@@ -61,6 +62,17 @@ export default async function RootLayout({
         <I18nProvider lang={lang}>{children}</I18nProvider>
         <PwaRegister />
         <PwaInstallPrompt />
+        <Script id="pwa-install-capture" strategy="beforeInteractive">
+          {`(function () {
+  try {
+    window.__kimaraPwaPrompt = null;
+    window.addEventListener("beforeinstallprompt", function (e) {
+      e.preventDefault();
+      window.__kimaraPwaPrompt = e;
+    });
+  } catch (err) {}
+})();`}
+        </Script>
       </body>
     </html>
   );

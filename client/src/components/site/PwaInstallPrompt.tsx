@@ -2,9 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-interface BeforeInstallPromptEvent extends Event {
+export interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+}
+
+declare global {
+  interface Window {
+    /** Captured as early as possible by an inline <head> script in layout.tsx. */
+    __kimaraPwaPrompt?: BeforeInstallPromptEvent | null;
+  }
 }
 
 const STORAGE_KEY = "sda_pwa_installed";
@@ -28,16 +35,20 @@ function isAndroid() {
 }
 
 /**
- * First-visit install popup. Where the browser supports PWA installs
- * (Android + Chrome/Edge) it captures the beforeinstallprompt event and the
- * "Install" button calls prompt(), which installs the app directly on the
- * device — no app store involved. On iPhone/iPad (Apple offers no install
- * API) it shows the Safari "Add to Home Screen" steps instead.
+ * Install popup shown on every visit unless the app is already installed.
+ * Chrome/Edge (Android + desktop) fire beforeinstallprompt: the "Install"
+ * button calls prompt(), which downloads and installs the app directly on the
+ * device — no app store involved. On iPhone/iPad (no install API) it shows the
+ * Safari "Add to Home Screen" steps instead.
  */
 export default function PwaInstallPrompt() {
-  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
+  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(() => {
+    if (typeof window === "undefined") return null;
+    return window.__kimaraPwaPrompt ?? null;
+  });
   const [visible, setVisible] = useState(false);
   const [waiting, setWaiting] = useState(false);
+  const [unsupported, setUnsupported] = useState(false);
   const deferredRef = useRef<BeforeInstallPromptEvent | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const waitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -80,8 +91,6 @@ export default function PwaInstallPrompt() {
   );
 
   useEffect(() => {
-    // The popup always shows on every visit, unless the app is already
-    // installed (running standalone or previously installed in this browser).
     if (isStandalone() || localStorage.getItem(STORAGE_KEY)) {
       seenRef.current = true;
       return;
@@ -90,6 +99,7 @@ export default function PwaInstallPrompt() {
     const onPrompt = (e: Event) => {
       e.preventDefault();
       const p = e as BeforeInstallPromptEvent;
+      window.__kimaraPwaPrompt = p;
       deferredRef.current = p;
       setDeferred(p);
       if (seenRef.current) return;
@@ -110,16 +120,20 @@ export default function PwaInstallPrompt() {
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
 
-    // iOS never fires beforeinstallprompt — show the manual steps instead.
     if (isIOS()) {
+      // iOS never fires beforeinstallprompt — show the manual steps.
       timerRef.current = setTimeout(() => setVisible(true), 2000);
+    } else if (deferredRef.current || window.__kimaraPwaPrompt) {
+      // The prompt was already captured (inline script) — show Install now.
+      setVisible(true);
     } else {
-      // Android / desktop: the "Install" button requires the browser's
-      // beforeinstallprompt. Show the popup as soon as it fires (Install
-      // button ready). If no signal arrives within 8s the browser does not
-      // support PWA installs (e.g. Firefox Android) — only then show a hint.
+      // No prompt yet. Chrome usually fires it within a couple of seconds; if
+      // nothing arrives within 8s the browser does not support PWA installs.
       timerRef.current = setTimeout(() => {
-        if (!deferredRef.current) setVisible(true);
+        if (!deferredRef.current) {
+          setUnsupported(true);
+          setVisible(true);
+        }
       }, 8000);
     }
 
@@ -131,7 +145,7 @@ export default function PwaInstallPrompt() {
   }, [clearTimers, completeInstall]);
 
   const install = async () => {
-    const p = deferred ?? deferredRef.current;
+    const p = deferred ?? deferredRef.current ?? window.__kimaraPwaPrompt ?? null;
     if (p) {
       await completeInstall(p);
       return;
@@ -142,13 +156,17 @@ export default function PwaInstallPrompt() {
     waitTimerRef.current = setTimeout(() => {
       userWantsRef.current = false;
       setWaiting(false);
+      setUnsupported(true);
     }, 5000);
   };
 
   if (!visible) return null;
 
-  const showInstall = Boolean(deferred);
-  const showIOSInstructions = isIOS();
+  const isIOSDevice = isIOS();
+  const isAndroidDevice = isAndroid();
+  const showInstallButton =
+    Boolean(deferred || window.__kimaraPwaPrompt) || (isAndroidDevice && !unsupported);
+  const showNotNow = showInstallButton && !waiting;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-end sm:p-6">
@@ -185,7 +203,7 @@ export default function PwaInstallPrompt() {
         </div>
 
         <div className="px-5 py-4">
-          {showIOSInstructions ? (
+          {isIOSDevice ? (
             <ol className="list-decimal space-y-2 pl-5 text-sm text-navy-800">
               <li>Tap the <strong>Share</strong> button at the bottom of Safari.</li>
               <li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
@@ -193,16 +211,16 @@ export default function PwaInstallPrompt() {
             </ol>
           ) : (
             <p className="text-sm text-navy-800">
-              {showInstall
+              {showInstallButton
                 ? "Install Kimara Youth directly on this device — it works offline, opens full-screen and never needs an app store."
-                : isAndroid()
+                : isAndroidDevice
                   ? "Open this site in Chrome on your device to install the app — no app store needed."
                   : "Install the Kimara Youth app directly on this device. Use Chrome or Edge on your computer to add it as an app."}
             </p>
           )}
 
           <div className="mt-4 flex items-center justify-end gap-3">
-            {showInstall && (
+            {showNotNow && (
               <button
                 type="button"
                 onClick={dismiss}
@@ -213,7 +231,7 @@ export default function PwaInstallPrompt() {
             )}
             <button
               type="button"
-              onClick={showInstall || waiting ? install : dismiss}
+              onClick={showInstallButton ? install : dismiss}
               disabled={waiting}
               className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors hover:bg-gold-400 disabled:opacity-70"
             >
@@ -225,7 +243,7 @@ export default function PwaInstallPrompt() {
                   </svg>
                   Preparing...
                 </>
-              ) : showInstall ? (
+              ) : showInstallButton ? (
                 "Install"
               ) : (
                 "Got it"

@@ -2,7 +2,7 @@
 const CACHE_NAME = "kimara-youth-v1";
 const PRECACHE_URLS = [
   "/",
-  "/manifest.webmanifest",
+  "/manifest.json",
   "/icons/icon-192.png",
   "/icons/icon-512.png",
   "/icons/icon-maskable-512.png",
