@@ -24,66 +24,113 @@ function isIOS() {
 }
 
 /**
- * First-visit install prompt shown on every device type. On Android and
- * desktop Chrome/Edge it captures beforeinstallprompt and offers a real
- * "Install" action; on iPhone/iPad (no install API) it shows Safari
- * "Add to Home Screen" instructions. Mounted once in the root layout so it
- * slides up from the bottom of the screen on the landing page.
+ * First-visit install popup. Where the browser supports PWA installs
+ * (Android + Chrome/Edge) it captures the beforeinstallprompt event and the
+ * "Install" button calls prompt(), which installs the app directly on the
+ * device — no app store involved. On iPhone/iPad (Apple offers no install
+ * API) it shows the Safari "Add to Home Screen" steps instead.
  */
 export default function PwaInstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
+  const [waiting, setWaiting] = useState(false);
   const deferredRef = useRef<BeforeInstallPromptEvent | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const waitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const userWantsRef = useRef(false);
+  const seenRef = useRef(false);
 
-  const dismiss = useCallback(() => {
+  const clearTimers = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
       timerRef.current = null;
     }
+    if (waitTimerRef.current) {
+      clearTimeout(waitTimerRef.current);
+      waitTimerRef.current = null;
+    }
+  }, []);
+
+  const dismiss = useCallback(() => {
+    clearTimers();
+    seenRef.current = true;
+    userWantsRef.current = false;
+    setWaiting(false);
     localStorage.setItem(STORAGE_KEY, "1");
     setVisible(false);
-  }, []);
+  }, [clearTimers]);
+
+  const completeInstall = useCallback(
+    async (p: BeforeInstallPromptEvent) => {
+      await p.prompt();
+      const choice = await p.userChoice;
+      if (choice.outcome === "accepted") {
+        seenRef.current = true;
+        localStorage.setItem(STORAGE_KEY, "1");
+        setWaiting(false);
+        setVisible(false);
+      } else {
+        dismiss();
+      }
+    },
+    [dismiss]
+  );
 
   useEffect(() => {
     if (isStandalone()) return;
-    if (localStorage.getItem(STORAGE_KEY)) return;
+    if (localStorage.getItem(STORAGE_KEY)) {
+      seenRef.current = true;
+      return;
+    }
 
     const onPrompt = (e: Event) => {
       e.preventDefault();
       const p = e as BeforeInstallPromptEvent;
       deferredRef.current = p;
       setDeferred(p);
-      timerRef.current = setTimeout(() => setVisible(true), 600);
+      if (seenRef.current) return;
+      // If the user already tapped "Install", trigger the native install right away.
+      if (userWantsRef.current) {
+        void completeInstall(p);
+        return;
+      }
+      setVisible(true);
     };
     const onInstalled = () => {
+      seenRef.current = true;
       localStorage.setItem(STORAGE_KEY, "1");
+      setWaiting(false);
       setVisible(false);
     };
 
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
 
-    timerRef.current = setTimeout(() => setVisible(true), 2200);
+    // iOS never fires beforeinstallprompt — show the manual steps instead.
+    // Other browsers: wait for the prompt; if none arrives (e.g. Firefox /
+    // desktop Safari), show a short hint rather than an empty popup.
+    timerRef.current = setTimeout(() => setVisible(true), isIOS() ? 2000 : 6000);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("appinstalled", onInstalled);
-      if (timerRef.current) clearTimeout(timerRef.current);
+      clearTimers();
     };
-  }, []);
+  }, [clearTimers, completeInstall]);
 
   const install = async () => {
     const p = deferred ?? deferredRef.current;
-    if (!p) return;
-    await p.prompt();
-    const choice = await p.userChoice;
-    if (choice.outcome === "accepted") {
-      localStorage.setItem(STORAGE_KEY, "1");
-      setVisible(false);
-    } else {
-      dismiss();
+    if (p) {
+      await completeInstall(p);
+      return;
     }
+    // No prompt captured yet — wait for it, then auto-install once it fires.
+    userWantsRef.current = true;
+    setWaiting(true);
+    waitTimerRef.current = setTimeout(() => {
+      userWantsRef.current = false;
+      setWaiting(false);
+    }, 5000);
   };
 
   if (!visible) return null;
@@ -135,8 +182,8 @@ export default function PwaInstallPrompt() {
           ) : (
             <p className="text-sm text-navy-800">
               {showInstall
-                ? "Add Kimara Youth to your home screen for quick access, live YouTube worship links and offline-friendly browsing."
-                : "Install the Kimara Youth app for the best experience. Use Chrome or Edge on your computer to add it as an app."}
+                ? "Install Kimara Youth directly on this device — it works offline, opens full-screen and never needs an app store."
+                : "Install the Kimara Youth app directly on this device. Use Chrome or Edge on your computer to add it as an app."}
             </p>
           )}
 
@@ -152,10 +199,23 @@ export default function PwaInstallPrompt() {
             )}
             <button
               type="button"
-              onClick={showInstall ? install : dismiss}
-              className="rounded-full bg-gold-500 px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors hover:bg-gold-400"
+              onClick={showInstall || waiting ? install : dismiss}
+              disabled={waiting}
+              className="inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors hover:bg-gold-400 disabled:opacity-70"
             >
-              {showInstall ? "Install" : "Got it"}
+              {waiting ? (
+                <>
+                  <svg className="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeOpacity="0.25" strokeWidth="4" />
+                    <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+                  </svg>
+                  Preparing...
+                </>
+              ) : showInstall ? (
+                "Install"
+              ) : (
+                "Got it"
+              )}
             </button>
           </div>
         </div>
