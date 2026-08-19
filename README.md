@@ -70,7 +70,7 @@ npm run dev       # http://localhost:5000
 
 ## Media Uploads & Free CDN
 
-- **Image upload** — admins upload images (JPG, PNG, WEBP, GIF, max 15MB) directly in the admin panel. Files are stored on the server under `server/uploads/` and served with long cache headers (`immutable`, 365 days) for fast repeat loads.
+- **Image upload** — admins upload images (JPG, PNG, WEBP, GIF, max 30MB) directly in the admin panel. Files are stored on the server under `server/uploads/` and served with long cache headers (`immutable`, 365 days) for fast repeat loads.
 - **PDF storage** — admins upload PDF files for resources (sermons, handbooks, study materials) using the same upload flow.
 - **Free CDN (optional)** — set `CDN_BASE_URL` in `server/.env` to prefix uploaded file URLs with your free CDN domain (e.g. Cloudflare R2, Cloudinary free tier). When empty, files are served from this server.
 - **Frontend optimization** — the frontend renders images through Next.js image optimization (self-hosted, cached, responsive) instead of raw `<img>` tags, so images are fast and mobile-friendly.

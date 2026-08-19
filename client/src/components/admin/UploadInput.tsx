@@ -74,7 +74,7 @@ export default function UploadInput({
           />
         </label>
         <span className="text-xs text-gray-500">
-          {isImage ? "JPG, PNG, WEBP, GIF (max 15MB)" : "PDF (max 15MB)"}
+          {isImage ? "JPG, PNG, WEBP, GIF (max 30MB)" : "PDF (max 30MB)"}
         </span>
       </div>
 

@@ -81,7 +81,7 @@ export default function MultiUploadInput({
           {uploading ? "Uploading..." : label}
           <input type="file" accept="image/*" onChange={handleFile} className="hidden" />
         </label>
-        <span className="text-xs text-gray-500">JPG, PNG, WEBP, GIF (max 15MB). First image is the cover.</span>
+        <span className="text-xs text-gray-500">JPG, PNG, WEBP, GIF (max 30MB). First image is the cover.</span>
       </div>
 
       <input id={name} type="hidden" name={name} value={JSON.stringify(urls)} readOnly />
