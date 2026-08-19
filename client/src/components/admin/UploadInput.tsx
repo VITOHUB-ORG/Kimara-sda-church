@@ -22,12 +22,20 @@ export default function UploadInput({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const isImage = accept.startsWith("image/");
+  const maxBytes = 30 * 1024 * 1024;
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     setError("");
+
+    if (file.size > maxBytes) {
+      setError("File too large. Maximum size is 30MB.");
+      setUploading(false);
+      e.target.value = "";
+      return;
+    }
 
     const form = new FormData();
     form.append("file", file);

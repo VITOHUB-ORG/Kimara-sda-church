@@ -18,6 +18,7 @@ export default function MultiUploadInput({
   const [urls, setUrls] = useState<string[]>(defaultValue);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const maxBytes = 30 * 1024 * 1024;
 
   function update(next: string[]) {
     setUrls(next);
@@ -48,6 +49,13 @@ export default function MultiUploadInput({
     if (!file) return;
     setUploading(true);
     setError("");
+
+    if (file.size > maxBytes) {
+      setError("File too large. Maximum size is 30MB.");
+      setUploading(false);
+      e.target.value = "";
+      return;
+    }
 
     const form = new FormData();
     form.append("file", file);
