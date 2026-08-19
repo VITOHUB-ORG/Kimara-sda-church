@@ -23,23 +23,24 @@ function isIOS() {
   return /iphone|ipad|ipod/i.test(ua) || iPadOS;
 }
 
-function isAndroid() {
-  return /android/i.test(navigator.userAgent);
-}
-
 /**
- * First-visit install prompt. On Android it captures the browser's
- * beforeinstallprompt event and offers a real "Install" action; on iPhone /
- * iPad (which have no such event) it shows step-by-step instructions for
- * Safari's "Add to Home Screen". Mounted once in the root layout so it shows
- * on the landing page, sliding up from the bottom of the screen.
+ * First-visit install prompt shown on every device type. On Android and
+ * desktop Chrome/Edge it captures beforeinstallprompt and offers a real
+ * "Install" action; on iPhone/iPad (no install API) it shows Safari
+ * "Add to Home Screen" instructions. Mounted once in the root layout so it
+ * slides up from the bottom of the screen on the landing page.
  */
 export default function PwaInstallPrompt() {
   const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
   const deferredRef = useRef<BeforeInstallPromptEvent | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dismiss = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
     localStorage.setItem(STORAGE_KEY, "1");
     setVisible(false);
   }, []);
@@ -47,14 +48,13 @@ export default function PwaInstallPrompt() {
   useEffect(() => {
     if (isStandalone()) return;
     if (localStorage.getItem(STORAGE_KEY)) return;
-    if (!isAndroid() && !isIOS()) return;
 
     const onPrompt = (e: Event) => {
       e.preventDefault();
       const p = e as BeforeInstallPromptEvent;
       deferredRef.current = p;
       setDeferred(p);
-      setTimeout(() => setVisible(true), 600);
+      timerRef.current = setTimeout(() => setVisible(true), 600);
     };
     const onInstalled = () => {
       localStorage.setItem(STORAGE_KEY, "1");
@@ -64,16 +64,12 @@ export default function PwaInstallPrompt() {
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
 
-    // iOS never fires beforeinstallprompt — show manual instructions instead.
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    if (isIOS()) {
-      timer = setTimeout(() => setVisible(true), 2200);
-    }
+    timerRef.current = setTimeout(() => setVisible(true), 2200);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", onPrompt);
       window.removeEventListener("appinstalled", onInstalled);
-      if (timer) clearTimeout(timer);
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 
@@ -91,6 +87,9 @@ export default function PwaInstallPrompt() {
   };
 
   if (!visible) return null;
+
+  const showInstall = Boolean(deferred);
+  const showIOSInstructions = isIOS();
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-end sm:p-6">
@@ -122,12 +121,12 @@ export default function PwaInstallPrompt() {
           <img src="/icons/icon-192.png" alt="" width={44} height={44} className="h-11 w-11 rounded-xl" />
           <div>
             <p className="font-display text-base font-bold text-white">Kimara Youth</p>
-            <p className="text-xs text-navy-100">Install our app on your phone</p>
+            <p className="text-xs text-navy-100">Install our app on your device</p>
           </div>
         </div>
 
         <div className="px-5 py-4">
-          {isIOS() ? (
+          {showIOSInstructions ? (
             <ol className="list-decimal space-y-2 pl-5 text-sm text-navy-800">
               <li>Tap the <strong>Share</strong> button at the bottom of Safari.</li>
               <li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
@@ -135,13 +134,14 @@ export default function PwaInstallPrompt() {
             </ol>
           ) : (
             <p className="text-sm text-navy-800">
-              Add Kimara Youth to your home screen for quick access, live YouTube
-              worship links and offline-friendly browsing.
+              {showInstall
+                ? "Add Kimara Youth to your home screen for quick access, live YouTube worship links and offline-friendly browsing."
+                : "Install the Kimara Youth app for the best experience. Use Chrome or Edge on your computer to add it as an app."}
             </p>
           )}
 
           <div className="mt-4 flex items-center justify-end gap-3">
-            {!isIOS() && (
+            {showInstall && (
               <button
                 type="button"
                 onClick={dismiss}
@@ -152,10 +152,10 @@ export default function PwaInstallPrompt() {
             )}
             <button
               type="button"
-              onClick={isIOS() ? dismiss : install}
+              onClick={showInstall ? install : dismiss}
               className="rounded-full bg-gold-500 px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors hover:bg-gold-400"
             >
-              {isIOS() ? "Got it" : "Install"}
+              {showInstall ? "Install" : "Got it"}
             </button>
           </div>
         </div>
