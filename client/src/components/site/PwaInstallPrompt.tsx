@@ -7,7 +7,7 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
 }
 
-const STORAGE_KEY = "sda_pwa_prompt_seen";
+const STORAGE_KEY = "sda_pwa_installed";
 
 function isStandalone() {
   return (
@@ -56,7 +56,6 @@ export default function PwaInstallPrompt() {
     seenRef.current = true;
     userWantsRef.current = false;
     setWaiting(false);
-    localStorage.setItem(STORAGE_KEY, "1");
     setVisible(false);
   }, [clearTimers]);
 
@@ -77,8 +76,9 @@ export default function PwaInstallPrompt() {
   );
 
   useEffect(() => {
-    if (isStandalone()) return;
-    if (localStorage.getItem(STORAGE_KEY)) {
+    // The popup always shows on every visit, unless the app is already
+    // installed (running standalone or previously installed in this browser).
+    if (isStandalone() || localStorage.getItem(STORAGE_KEY)) {
       seenRef.current = true;
       return;
     }
