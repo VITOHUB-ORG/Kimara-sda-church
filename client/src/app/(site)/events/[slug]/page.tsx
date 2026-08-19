@@ -38,7 +38,6 @@ export default async function EventDetailPage({ params }: Props) {
       <PageHeader
         eyebrow={isLive ? t("common.watchLiveNow") : t("eventDetail.eventLabel")}
         title={event.title}
-        description={event.description}
       />
       <section className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

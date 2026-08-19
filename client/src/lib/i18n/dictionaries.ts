@@ -129,6 +129,7 @@ const en = {
     details: "Details",
     readMore: "Read more",
     openResource: "Open resource",
+    download: "Download",
     backToNews: "Back to announcements",
     watchLiveNow: "Tazama Live Ibada ya Leo",
     comingSoon: "Coming soon.",
@@ -224,6 +225,8 @@ const en = {
     title: "Spiritual Resources",
     desc: "Bible study, devotionals, sermons, prayer, testimonies and downloadable content to help you grow.",
     comingSoon: "Resources coming soon.",
+    count: "resources available",
+    categories: "Resource categories",
   },
   newsPage: {
     eyebrow: "Stay Informed",
@@ -471,6 +474,7 @@ const sw: Dictionary = {
     details: "Maelezo",
     readMore: "Soma Zaidi",
     openResource: "Fungua rasilimali",
+    download: "Pakua",
     backToNews: "Rudi kwa Matangazo",
     watchLiveNow: "Tazama Live Ibada ya Leo",
     comingSoon: "Inakuja hivi karibuni.",
@@ -566,6 +570,8 @@ const sw: Dictionary = {
     title: "Rasilimali za Kiroho",
     desc: "Mafunzo ya Biblia, ibada za asubuhi, mahubiri, sala, ushuhuda na nyaraka za kupakuliwa ili kukusaidia kukua.",
     comingSoon: "Rasilimali zinakuja hivi karibuni.",
+    count: "rasilimali zinapatikana",
+    categories: "Aina za rasilimali",
   },
   newsPage: {
     eyebrow: "Endelea Kufahamishwa",

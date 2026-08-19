@@ -9,6 +9,7 @@ import {
   IconSparkles,
   IconDownload,
   IconFile,
+  IconArrowRight,
   type IconProps,
 } from "@/lib/icons";
 
@@ -27,7 +28,13 @@ export default async function ResourceCard({ resource }: { resource: Resource })
   const Icon = typeIcons[resource.type] || IconFile;
 
   return (
-    <div className="flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
+    <div className="relative flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
+      {resource.fileUrl && (
+        <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-gold-500/15 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-gold-600">
+          <IconDownload className="h-3 w-3" />
+          {t("common.download")}
+        </span>
+      )}
       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-navy-100/60 text-navy-800">
         <Icon className="h-6 w-6" />
       </span>
@@ -39,20 +46,28 @@ export default async function ResourceCard({ resource }: { resource: Resource })
       {resource.author && (
         <p className="mt-3 text-xs text-gray-500">— {resource.author}</p>
       )}
-      {(resource.fileUrl || resource.link) && (
-        <a
-          href={resource.fileUrl || resource.link}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-navy-800 hover:text-gold-600"
-        >
-          {t("common.openResource")}
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
-        </a>
-      )}
+      <div className="mt-5 border-t border-gray-100 pt-4">
+        {resource.fileUrl ? (
+          <a
+            href={resource.fileUrl}
+            download
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors hover:bg-gold-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
+          >
+            <IconDownload className="h-4 w-4" />
+            {t("common.download")}
+          </a>
+        ) : resource.link ? (
+          <a
+            href={resource.link}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-navy-900 px-5 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors hover:bg-navy-900 hover:text-white"
+          >
+            {t("common.openResource")}
+            <IconArrowRight className="h-4 w-4" />
+          </a>
+        ) : null}
+      </div>
     </div>
   );
 }

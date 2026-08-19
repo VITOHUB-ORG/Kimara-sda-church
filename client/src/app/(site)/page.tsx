@@ -30,7 +30,7 @@ function gallerySlides(items: GalleryItem[]): CarouselSlide[] {
 async function getData() {
   const [ministries, events, resources, news, featured, gallery] = await Promise.all([
     apiGet<Paginated<Ministry>>("/api/public/ministries?limit=6").catch(() => null),
-    apiGet<Paginated<Event>>("/api/public/events?limit=6&sort=startDate").catch(() => null),
+    apiGet<Paginated<Event>>("/api/public/events?limit=6&sort=-createdAt").catch(() => null),
     apiGet<Paginated<Resource>>("/api/public/resources?limit=6").catch(() => null),
     apiGet<Paginated<NewsItem>>("/api/public/news?limit=3").catch(() => null),
     apiGet<Paginated<GalleryItem>>("/api/public/gallery?featured=true&limit=6").catch(() => null),

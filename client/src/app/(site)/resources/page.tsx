@@ -31,36 +31,46 @@ export default async function ResourcesPage() {
       <section className="bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {data.items.length > 0 ? (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {data.items.map((resource) => (
-                <ResourceCard key={resource._id} resource={resource} />
-              ))}
-            </div>
+            <>
+              <p className="mb-6 text-sm font-semibold text-gray-600">
+                {data.items.length} {t("resourcesPage.count")}
+              </p>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {data.items.map((resource) => (
+                  <ResourceCard key={resource._id} resource={resource} />
+                ))}
+              </div>
+            </>
           ) : (
             <p className="text-center text-gray-500">
               {t("resourcesPage.comingSoon")}
             </p>
           )}
 
-          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {(Object.keys(resourceMeta) as (keyof typeof resourceMeta)[]).map(
-              (type) => {
-                const meta = resourceMeta[type];
-                return (
-                  <div
-                    key={type}
-                    className="rounded-2xl border border-gray-100 bg-navy-100/40 p-6"
-                  >
-                    <h3 className="font-display text-lg font-bold text-navy-900">
-                      {meta.label}
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-600">
-                      {meta.description}
-                    </p>
-                  </div>
-                );
-              }
-            )}
+          <div className="mt-16">
+            <h2 className="border-b-2 border-navy-900 pb-2 font-display text-sm font-extrabold uppercase tracking-[0.2em] text-navy-900">
+              {t("resourcesPage.categories")}
+            </h2>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {(Object.keys(resourceMeta) as (keyof typeof resourceMeta)[]).map(
+                (type) => {
+                  const meta = resourceMeta[type];
+                  return (
+                    <div
+                      key={type}
+                      className="rounded-2xl border border-gray-100 bg-navy-100/40 p-6"
+                    >
+                      <h3 className="font-display text-lg font-bold text-navy-900">
+                        {meta.label}
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-600">
+                        {meta.description}
+                      </p>
+                    </div>
+                  );
+                }
+              )}
+            </div>
           </div>
         </div>
       </section>
