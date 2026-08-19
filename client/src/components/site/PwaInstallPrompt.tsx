@@ -23,6 +23,10 @@ function isIOS() {
   return /iphone|ipad|ipod/i.test(ua) || iPadOS;
 }
 
+function isAndroid() {
+  return /android/i.test(navigator.userAgent);
+}
+
 /**
  * First-visit install popup. Where the browser supports PWA installs
  * (Android + Chrome/Edge) it captures the beforeinstallprompt event and the
@@ -107,9 +111,17 @@ export default function PwaInstallPrompt() {
     window.addEventListener("appinstalled", onInstalled);
 
     // iOS never fires beforeinstallprompt — show the manual steps instead.
-    // Other browsers: wait for the prompt; if none arrives (e.g. Firefox /
-    // desktop Safari), show a short hint rather than an empty popup.
-    timerRef.current = setTimeout(() => setVisible(true), isIOS() ? 2000 : 6000);
+    if (isIOS()) {
+      timerRef.current = setTimeout(() => setVisible(true), 2000);
+    } else {
+      // Android / desktop: the "Install" button requires the browser's
+      // beforeinstallprompt. Show the popup as soon as it fires (Install
+      // button ready). If no signal arrives within 8s the browser does not
+      // support PWA installs (e.g. Firefox Android) — only then show a hint.
+      timerRef.current = setTimeout(() => {
+        if (!deferredRef.current) setVisible(true);
+      }, 8000);
+    }
 
     return () => {
       window.removeEventListener("beforeinstallprompt", onPrompt);
@@ -183,7 +195,9 @@ export default function PwaInstallPrompt() {
             <p className="text-sm text-navy-800">
               {showInstall
                 ? "Install Kimara Youth directly on this device — it works offline, opens full-screen and never needs an app store."
-                : "Install the Kimara Youth app directly on this device. Use Chrome or Edge on your computer to add it as an app."}
+                : isAndroid()
+                  ? "Open this site in Chrome on your device to install the app — no app store needed."
+                  : "Install the Kimara Youth app directly on this device. Use Chrome or Edge on your computer to add it as an app."}
             </p>
           )}
 
