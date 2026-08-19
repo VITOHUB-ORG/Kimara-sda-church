@@ -35,6 +35,7 @@ export interface Event {
   registrationLink: string;
   featured: boolean;
   published: boolean;
+  createdAt?: string;
 }
 
 export interface NewsItem {
