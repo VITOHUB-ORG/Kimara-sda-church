@@ -11,12 +11,23 @@ export function normalizeImageSrc(src: string): string {
   return src;
 }
 
-export async function apiGet<T>(path: string, revalidate?: number): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    next: revalidate ? { revalidate } : undefined,
-  });
-  if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
-  return res.json();
+export async function apiGet<T>(
+  path: string,
+  revalidate?: number,
+  timeoutMs = 10000
+): Promise<T> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${API_URL}${path}`, {
+      next: revalidate ? { revalidate } : undefined,
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`API error: ${res.status} ${res.statusText}`);
+    return res.json();
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 export async function apiPost<T>(path: string, body: unknown): Promise<T> {
