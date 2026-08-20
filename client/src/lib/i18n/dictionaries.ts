@@ -117,6 +117,7 @@ const en = {
       testimonies: "Testimonies",
       prayer: "Prayer Requests",
       contact: "Contact",
+      church: "Church Information",
       privacy: "Privacy",
     },
     bottomChurch: "Seventh-day Adventist Church · Youth Department · Kimara",
@@ -291,7 +292,7 @@ const en = {
     channels: [
       { title: "Youth Director", detail: "Office hours by appointment" },
       { title: "Church Location", detail: "Seventh-day Adventist Church" },
-      { title: "Sabbath School", detail: "Every Sabbath, 9:30 AM" },
+      { title: "Sabbath School", detail: "Every Sabbath, 9:15 AM" },
       { title: "Youth Services", detail: "Every Sabbath afternoon" },
     ],
     noteLabel: "Important Note",
@@ -481,7 +482,7 @@ const sw: Dictionary = {
       testimonies: "Ushuhuda",
       prayer: "Maombi",
       contact: "Wasiliana",
-     
+      church: "Taarifa za Kanisa",
       privacy: "Faragha",
     },
     bottomChurch: "Kanisa la Seventh-day Adventist · Idara ya Vijana · Kimara",
