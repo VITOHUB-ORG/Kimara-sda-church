@@ -32,6 +32,7 @@ export const crudRoutes = (Model, { publicOnly = false, publicFilter } = {}) => 
       const filter = cleanQuery(req.query);
 
       if (publicOnly) Object.assign(filter, publicFilter ?? { published: true });
+      else if (publicFilter) Object.assign(filter, publicFilter);
 
       const [total, items] = await Promise.all([
         Model.countDocuments(filter),
@@ -47,9 +48,10 @@ export const crudRoutes = (Model, { publicOnly = false, publicFilter } = {}) => 
   router.get("/:id", async (req, res, next) => {
     try {
       const isObjectId = /^[0-9a-fA-F]{24}$/.test(req.params.id);
+      const filter = publicFilter ?? {};
       const item = isObjectId
-        ? await Model.findById(req.params.id)
-        : await Model.findOne({ slug: req.params.id });
+        ? await Model.findOne({ _id: req.params.id, ...filter })
+        : await Model.findOne({ slug: req.params.id, ...filter });
       if (!item) return res.status(404).json({ message: "Not found" });
       res.json(item);
     } catch (err) {

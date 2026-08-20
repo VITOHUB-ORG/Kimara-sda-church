@@ -16,7 +16,9 @@ export default async function NewsCard({ item }: { item: NewsItem }) {
   const meta = readingMeta(item.type);
   const label = readingLabel(t, item.type, item.category);
   return (
-    <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
+    <article
+      className={`group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 border-t-4 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl ${meta?.bar ?? "border-t-navy-700"}`}
+    >
       <div className="relative aspect-[16/9] w-full overflow-hidden">
         {item.image ? (
           <SiteImage
@@ -32,7 +34,7 @@ export default async function NewsCard({ item }: { item: NewsItem }) {
           </div>
         )}
       </div>
-      <div className="p-6">
+      <div className="flex flex-1 flex-col p-6">
         <div className="flex items-center gap-3 text-xs text-gray-500">
           <span
             className={`rounded-full px-3 py-1 font-semibold ${meta?.badge ?? "bg-navy-100 text-navy-800"}`}
@@ -44,7 +46,10 @@ export default async function NewsCard({ item }: { item: NewsItem }) {
         <h3 className="mt-3 font-display text-lg font-bold leading-snug text-navy-900 group-hover:text-navy-800">
           {item.title}
         </h3>
-        <p className="mt-2 text-sm text-gray-600 line-clamp-3">{item.excerpt}</p>
+        <p className="mt-2 flex-1 text-sm text-gray-600 line-clamp-3">{item.excerpt}</p>
+        {item.author && (
+          <p className="mt-3 text-xs text-gray-500">{item.author}</p>
+        )}
         <Link
           href={`/news/${item.slug || item._id}`}
           className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-gold-600 hover:text-gold-500"

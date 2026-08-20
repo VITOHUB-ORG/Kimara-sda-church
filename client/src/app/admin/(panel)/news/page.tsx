@@ -16,7 +16,6 @@ const typeLabels: Record<string, string> = {
   lesoni: "Bible Study Guide",
   bobea: "Youth Lesson",
   kesha: "Morning Devotional",
-  announcement: "Announcement",
 };
 
 const fields: Field[] = [
@@ -29,7 +28,6 @@ const fields: Field[] = [
       { value: "lesoni", label: "Bible Study Guide (Lesoni)" },
       { value: "bobea", label: "Youth Lesson (Bobea)" },
       { value: "kesha", label: "Morning Devotional (Kesha la Asubuhi)" },
-      { value: "announcement", label: "Announcement" },
     ],
   },
   { name: "bibleText", label: "Bible Text (reference)", type: "text", placeholder: "e.g. Isaiah 41:10" },

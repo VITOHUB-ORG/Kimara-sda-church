@@ -44,7 +44,9 @@ async function getData() {
     ministries: ministries?.items ?? [],
     events: events?.items ?? [],
     resources: resources?.items ?? [],
-    news: news?.items ?? [],
+    news: (news?.items ?? []).filter((i) =>
+      ["lesoni", "bobea", "kesha"].includes(i.type)
+    ),
     gallery: galleryItems,
   };
 }

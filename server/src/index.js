@@ -61,7 +61,13 @@ app.use("/api/upload", uploadRoutes);
 
 // Public read-only endpoints
 app.use("/api/public/events", crudRoutes(Event, { publicOnly: true }));
-app.use("/api/public/news", crudRoutes(News, { publicOnly: true }));
+app.use(
+  "/api/public/news",
+  crudRoutes(News, {
+    publicOnly: true,
+    publicFilter: { published: true, type: { $in: ["lesoni", "bobea", "kesha"] } },
+  })
+);
 app.use("/api/public/resources", crudRoutes(Resource, { publicOnly: true }));
 app.use("/api/public/ministries", crudRoutes(Ministry, { publicOnly: true }));
 app.use("/api/public/gallery", crudRoutes(GalleryItem, { publicOnly: true, publicFilter: {} }));
@@ -95,7 +101,10 @@ app.post("/api/public/contact", async (req, res, next) => {
 
 // Admin-protected CRUD
 app.use("/api/admin/events", crudRoutes(Event));
-app.use("/api/admin/news", crudRoutes(News));
+app.use(
+  "/api/admin/news",
+  crudRoutes(News, { publicFilter: { type: { $in: ["lesoni", "bobea", "kesha"] } } })
+);
 app.use("/api/admin/resources", crudRoutes(Resource));
 app.use("/api/admin/ministries", crudRoutes(Ministry));
 app.use("/api/admin/gallery", crudRoutes(GalleryItem));

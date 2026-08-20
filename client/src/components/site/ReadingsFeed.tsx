@@ -18,6 +18,22 @@ const formatDate = (iso: string) =>
     year: "numeric",
   });
 
+function DateChip({ iso }: { iso: string }) {
+  const date = new Date(iso);
+  const day = date.getDate();
+  const month = date.toLocaleDateString("en-GB", { month: "short" });
+  return (
+    <div className="flex flex-col items-center justify-center rounded-xl bg-white/95 px-4 py-2 text-center shadow-lg">
+      <span className="font-display text-2xl font-black leading-none text-navy-900">
+        {day}
+      </span>
+      <span className="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-gold-600">
+        {month}
+      </span>
+    </div>
+  );
+}
+
 function PlaceholderIcon() {
   return (
     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy-800 to-navy-950">
@@ -35,7 +51,9 @@ function ReadingCard({ item, t }: CardProps) {
   const meta = readingMeta(item.type);
   const label = readingLabel(t, item.type, item.category);
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
+    <article
+      className={`group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 border-t-4 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl ${meta?.bar ?? "border-t-navy-700"}`}
+    >
       <Link href={`/news/${item.slug || item._id}`} className="block">
         <div className="relative aspect-[16/9] w-full overflow-hidden">
           {item.image ? (
@@ -52,7 +70,9 @@ function ReadingCard({ item, t }: CardProps) {
       </Link>
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         {label && (
-          <span className={`self-start rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${meta?.badge ?? "bg-navy-100 text-navy-800"}`}>
+          <span
+            className={`self-start rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${meta?.badge ?? "bg-navy-100 text-navy-800"}`}
+          >
             {label}
           </span>
         )}
@@ -61,14 +81,14 @@ function ReadingCard({ item, t }: CardProps) {
         </h3>
         <p className="mt-2 flex-1 text-sm text-gray-600 line-clamp-3">{item.excerpt}</p>
         <div className="mt-4 flex items-center justify-between gap-2 text-xs text-gray-500">
-          <span>{formatDate(item.createdAt)}</span>
-          <span className="font-semibold text-gray-400">
+          <span className="truncate">{item.author || formatDate(item.createdAt)}</span>
+          <span className="shrink-0 font-semibold text-gray-400">
             {t("readings.minRead", { min: String(readingMinutes(item.content)) })}
           </span>
         </div>
         <Link
           href={`/news/${item.slug || item._id}`}
-          className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-gold-600 transition-colors hover:text-gold-500"
+          className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-full border border-gold-500 px-5 py-2 text-sm font-bold text-gold-600 transition-colors hover:bg-gold-500 hover:text-navy-900"
         >
           {t("readings.readNow")}
           <IconArrowRight className="h-4 w-4" />
@@ -105,11 +125,11 @@ export default async function ReadingsFeed() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      {/* Today's Reading hero */}
+      {/* Today's Lesson hero */}
       <section aria-label={t("readings.todayTitle")}>
         <Link
           href={`/news/${today.slug || today._id}`}
-          className="group relative block overflow-hidden rounded-2xl shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-500"
+          className="group relative block overflow-hidden rounded-3xl shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-500"
         >
           <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[21/9]">
             {today.image ? (
@@ -124,6 +144,9 @@ export default async function ReadingsFeed() {
               <PlaceholderIcon />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/40 to-transparent" />
+            <div className="absolute left-5 top-5 z-10">
+              <DateChip iso={today.createdAt} />
+            </div>
             <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 lg:p-10">
               <p className="font-display text-xs font-bold uppercase tracking-[0.25em] text-gold-400">
                 {t("readings.todayTitle")}
@@ -144,11 +167,13 @@ export default async function ReadingsFeed() {
               <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-navy-100 sm:text-sm">
                 <time dateTime={today.createdAt}>{formatDate(today.createdAt)}</time>
                 <span aria-hidden="true">·</span>
+                <span>{today.author}</span>
+                <span aria-hidden="true">·</span>
                 <span>
                   {t("readings.minRead", { min: String(readingMinutes(today.content)) })}
                 </span>
               </div>
-              <span className="mt-4 inline-flex items-center gap-2 font-display text-sm font-bold uppercase tracking-wide text-gold-400 transition-colors group-hover:text-gold-300">
+              <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors group-hover:bg-gold-400">
                 {t("readings.readNow")}
                 <IconArrowRight className="h-4 w-4" />
               </span>
@@ -167,7 +192,7 @@ export default async function ReadingsFeed() {
               <span className={`h-2.5 w-2.5 rounded-full ${type.dot}`} aria-hidden="true" />
               <h2
                 id={`reading-${type.value}`}
-                className="border-b-2 border-navy-900 pb-1 font-display text-lg font-extrabold uppercase tracking-[0.15em] text-navy-900"
+                className="border-b-2 border-navy-900 pb-1 font-display text-xl font-extrabold uppercase tracking-[0.15em] text-navy-900"
               >
                 {t(type.labelKey)}
               </h2>

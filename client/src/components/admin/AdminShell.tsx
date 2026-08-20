@@ -7,7 +7,7 @@ import { getToken, clearToken, revokeRefreshToken, adminFetch } from "@/lib/admi
 import {
   IconGrid,
   IconCalendar,
-  IconNewspaper,
+  IconBookOpen,
   IconBook,
   IconChurch,
   IconImage,
@@ -26,7 +26,7 @@ interface Admin {
 const nav = [
   { href: "/admin", label: "Dashboard", Icon: IconGrid },
   { href: "/admin/events", label: "Events", Icon: IconCalendar },
-  { href: "/admin/news", label: "News", Icon: IconNewspaper },
+  { href: "/admin/news", label: "Daily Lessons", Icon: IconBookOpen },
   { href: "/admin/resources", label: "Resources", Icon: IconBook },
   { href: "/admin/ministries", label: "Ministries", Icon: IconChurch },
   { href: "/admin/gallery", label: "Gallery", Icon: IconImage },

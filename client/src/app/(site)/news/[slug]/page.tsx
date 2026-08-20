@@ -6,7 +6,6 @@ import { getI18n } from "@/lib/i18n/server";
 import { readingLabel, readingMeta, readingMinutes } from "@/lib/readings";
 import PageHeader from "@/components/site/PageHeader";
 import SiteImage from "@/components/site/SiteImage";
-import ShareButtons from "@/components/site/ShareButtons";
 import { IconBookOpen, IconArrowLeft } from "@/lib/icons";
 
 const formatDate = (iso: string) =>
@@ -115,14 +114,6 @@ export default async function NewsDetailPage({ params }: Props) {
                 {para}
               </p>
             ))}
-          </div>
-
-          {/* Share */}
-          <div className="mt-10 flex flex-wrap items-center gap-4 border-t border-gray-200 pt-6">
-            <p className="font-display text-sm font-bold uppercase tracking-wide text-navy-900">
-              {t("readings.share")}
-            </p>
-            <ShareButtons title={item.title} />
           </div>
 
           {/* Related readings */}

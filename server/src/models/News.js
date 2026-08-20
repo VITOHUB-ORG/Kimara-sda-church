@@ -8,10 +8,10 @@ const newsSchema = new mongoose.Schema(
     content: { type: String, default: "" },
     type: {
       type: String,
-      enum: ["lesoni", "bobea", "kesha", "announcement"],
-      default: "announcement",
+      enum: ["lesoni", "bobea", "kesha"],
+      default: "lesoni",
     },
-    category: { type: String, default: "Announcement" },
+    category: { type: String, default: "" },
     bibleText: { type: String, default: "" },
     image: { type: String, default: "" },
     author: { type: String, default: "SDA Youth Ministry" },

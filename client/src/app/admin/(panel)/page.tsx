@@ -7,7 +7,7 @@ import type { Paginated } from "@/lib/api";
 
 const resources = [
   { path: "/api/admin/events", label: "Events", href: "/admin/events" },
-  { path: "/api/admin/news", label: "News Articles", href: "/admin/news" },
+  { path: "/api/admin/news", label: "Daily Lessons", href: "/admin/news" },
   { path: "/api/admin/resources", label: "Resources", href: "/admin/resources" },
   { path: "/api/admin/ministries", label: "Ministries", href: "/admin/ministries" },
   { path: "/api/admin/gallery", label: "Gallery Items", href: "/admin/gallery" },
@@ -67,10 +67,10 @@ export default function Dashboard() {
           How content management works
         </p>
         <p className="mt-2 text-sm text-gray-600">
-          Use the menu on the left to add or edit content. New events, news,
-          resources, ministries and gallery items appear on the public website
-          as soon as they are published. Prayer requests, testimonies and
-          contact messages arrive here from the public website.
+          Use the menu on the left to add or edit content. New events, daily
+          lessons, resources, ministries and gallery items appear on the public
+          website as soon as they are published. Prayer requests, testimonies
+          and contact messages arrive here from the public website.
         </p>
       </div>
     </div>

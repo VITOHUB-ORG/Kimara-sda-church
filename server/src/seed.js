@@ -137,28 +137,34 @@ const events = [
 
 const news = [
   {
-    title: "Youth Department Launches Official Digital Platform",
-    slug: "youth-department-launches-official-digital-platform",
-    excerpt: "The SDA Youth Ministry is now online — a single home for announcements, events, resources and ministry news.",
+    title: "Walking in the Light of God's Word",
+    slug: "walking-in-the-light-of-gods-word",
+    excerpt: "A daily Bible study guide to help you grow in faith, one lesson at a time.",
     content:
-      "We are excited to announce the official launch of the SDA Youth Ministry digital platform. This website provides centralized information access for all youth programs, events, resources and announcements.",
-    category: "Announcement",
+      "God's Word is a lamp for our feet and a light for our path. Today, open your Bible and let the Holy Spirit guide you into all truth. Meditate on the scripture, pray about it, and share what you learn with someone.",
+    type: "lesoni",
+    bibleText: "Psalm 119:105",
+    category: "Bible Study Guide",
   },
   {
-    title: "Successful Youth Week of Prayer",
-    slug: "successful-youth-week-of-prayer",
-    excerpt: "A powerful week of prayer and reflection across all youth ministries.",
+    title: "Living a Purpose-Filled Youth Life",
+    slug: "living-a-purpose-filled-youth-life",
+    excerpt: "A youth lesson on knowing your identity and purpose in Christ.",
     content:
-      "Thank God for a powerful Youth Week of Prayer. Young people gathered for evening devotionals, testimonies and intercessory prayer.",
-    category: "Report",
+      "Young people are called to live with purpose. Know Christ, grow in faith, and serve others. Let your youth be an example to all believers in speech, conduct, love, faith and purity.",
+    type: "bobea",
+    bibleText: "1 Timothy 4:12",
+    category: "Youth Lesson",
   },
   {
-    title: "Registration Open for Youth Conference 2026",
-    slug: "registration-open-for-youth-conference-2026",
-    excerpt: "Register now for the SDA Youth Conference — KNOW • GROW • SERVE.",
+    title: "Morning Devotional: Start Your Day in Prayer",
+    slug: "morning-devotional-start-your-day-in-prayer",
+    excerpt: "Begin each morning with thanksgiving and surrender your day to God.",
     content:
-      "Registration is now open for the SDA Youth Conference 2026 in Dar es Salaam. Don't miss this opportunity to worship, learn and connect.",
-    category: "Announcement",
+      "Before the busyness of the day begins, spend quiet time with the Lord. Thank Him for His faithfulness, confess your needs, and ask for wisdom to walk in His ways throughout the day.",
+    type: "kesha",
+    bibleText: "Psalm 5:3",
+    category: "Morning Devotional",
   },
 ];
 

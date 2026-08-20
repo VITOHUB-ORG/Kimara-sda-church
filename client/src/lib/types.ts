@@ -44,7 +44,7 @@ export interface NewsItem {
   slug: string;
   excerpt: string;
   content: string;
-  type: "lesoni" | "bobea" | "kesha" | "announcement";
+  type: "lesoni" | "bobea" | "kesha";
   category: string;
   bibleText: string;
   image: string;
