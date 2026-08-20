@@ -46,6 +46,7 @@ export interface NewsItem {
   content: string;
   type: "lesoni" | "bobea" | "kesha";
   category: string;
+  lessonDate: string;
   bibleText: string;
   image: string;
   author: string;

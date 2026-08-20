@@ -135,6 +135,9 @@ const events = [
   },
 ];
 
+const isoDate = (offsetDays) =>
+  new Date(Date.now() - offsetDays * 86400000).toISOString().slice(0, 10);
+
 const news = [
   {
     title: "Walking in the Light of God's Word",
@@ -144,6 +147,7 @@ const news = [
       "God's Word is a lamp for our feet and a light for our path. Today, open your Bible and let the Holy Spirit guide you into all truth. Meditate on the scripture, pray about it, and share what you learn with someone.",
     type: "lesoni",
     bibleText: "Psalm 119:105",
+    lessonDate: isoDate(0),
     category: "Bible Study Guide",
   },
   {
@@ -154,6 +158,7 @@ const news = [
       "Young people are called to live with purpose. Know Christ, grow in faith, and serve others. Let your youth be an example to all believers in speech, conduct, love, faith and purity.",
     type: "bobea",
     bibleText: "1 Timothy 4:12",
+    lessonDate: isoDate(0),
     category: "Youth Lesson",
   },
   {
@@ -164,6 +169,18 @@ const news = [
       "Before the busyness of the day begins, spend quiet time with the Lord. Thank Him for His faithfulness, confess your needs, and ask for wisdom to walk in His ways throughout the day.",
     type: "kesha",
     bibleText: "Psalm 5:3",
+    lessonDate: isoDate(0),
+    category: "Morning Devotional",
+  },
+  {
+    title: "The Power of a Quiet Time",
+    slug: "the-power-of-a-quiet-time",
+    excerpt: "Yesterday's devotional on spending consistent time with God.",
+    content:
+      "Make time each day to be alone with God. In the silence He speaks, strengthens and renews you for the journey ahead.",
+    type: "kesha",
+    bibleText: "Matthew 6:6",
+    lessonDate: isoDate(1),
     category: "Morning Devotional",
   },
 ];

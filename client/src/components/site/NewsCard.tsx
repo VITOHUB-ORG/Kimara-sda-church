@@ -4,12 +4,15 @@ import { readingLabel, readingMeta } from "@/lib/readings";
 import Link from "next/link";
 import SiteImage from "./SiteImage";
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-GB", {
+const formatDate = (value: string) => {
+  const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
+  const date = value ? new Date(isDateOnly ? `${value}T00:00:00` : value) : new Date();
+  return date.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
   });
+};
 
 export default async function NewsCard({ item }: { item: NewsItem }) {
   const { t } = await getI18n();
@@ -41,7 +44,7 @@ export default async function NewsCard({ item }: { item: NewsItem }) {
           >
             {label}
           </span>
-          <time>{formatDate(item.createdAt)}</time>
+          <time>{formatDate(item.lessonDate || item.createdAt)}</time>
         </div>
         <h3 className="mt-3 font-display text-lg font-bold leading-snug text-navy-900 group-hover:text-navy-800">
           {item.title}

@@ -12,6 +12,7 @@ const newsSchema = new mongoose.Schema(
       default: "lesoni",
     },
     category: { type: String, default: "" },
+    lessonDate: { type: String, default: "", trim: true },
     bibleText: { type: String, default: "" },
     image: { type: String, default: "" },
     author: { type: String, default: "SDA Youth Ministry" },

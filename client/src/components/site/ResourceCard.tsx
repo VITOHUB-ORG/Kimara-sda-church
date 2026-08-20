@@ -1,6 +1,7 @@
 import type { Resource } from "@/lib/types";
 import { resourceMeta } from "@/lib/ministries";
 import { getI18n } from "@/lib/i18n/server";
+import ResourceDownloadButton from "./ResourceDownloadButton";
 import {
   IconBookOpen,
   IconSunrise,
@@ -21,6 +22,22 @@ const typeIcons: Record<string, (props: IconProps) => React.ReactNode> = {
   testimony: IconSparkles,
   download: IconDownload,
 };
+
+function downloadName(title: string, url: string): string {
+  const clean = title.trim() || "resource";
+  try {
+    const pathname = /^https?:\/\//i.test(url)
+      ? new URL(url).pathname
+      : url.split("?")[0];
+    const ext = pathname.split(".").pop();
+    if (ext && ext.length <= 5 && /^[a-zA-Z0-9]+$/.test(ext)) {
+      return `${clean}.${ext}`;
+    }
+  } catch {
+    /* ignore malformed URLs */
+  }
+  return clean;
+}
 
 export default async function ResourceCard({ resource }: { resource: Resource }) {
   const { t } = await getI18n();
@@ -48,14 +65,11 @@ export default async function ResourceCard({ resource }: { resource: Resource })
       )}
       <div className="mt-5 border-t border-gray-100 pt-4">
         {resource.fileUrl ? (
-          <a
-            href={resource.fileUrl}
-            download
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 px-5 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors hover:bg-gold-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500"
-          >
-            <IconDownload className="h-4 w-4" />
-            {t("common.download")}
-          </a>
+          <ResourceDownloadButton
+            fileUrl={resource.fileUrl}
+            fileName={downloadName(resource.title, resource.fileUrl)}
+            label={t("common.download")}
+          />
         ) : resource.link ? (
           <a
             href={resource.link}

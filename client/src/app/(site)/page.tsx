@@ -32,7 +32,7 @@ async function getData() {
     apiGet<Paginated<Ministry>>("/api/public/ministries?limit=6").catch(() => null),
     apiGet<Paginated<Event>>("/api/public/events?limit=6&sort=-createdAt").catch(() => null),
     apiGet<Paginated<Resource>>("/api/public/resources?limit=6").catch(() => null),
-    apiGet<Paginated<NewsItem>>("/api/public/news?limit=3").catch(() => null),
+    apiGet<Paginated<NewsItem>>("/api/public/news?limit=3&sort=-lessonDate").catch(() => null),
     apiGet<Paginated<GalleryItem>>("/api/public/gallery?featured=true&limit=6").catch(() => null),
     apiGet<Paginated<GalleryItem>>("/api/public/gallery?limit=6").catch(() => null),
   ]);

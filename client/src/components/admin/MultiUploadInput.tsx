@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { normalizeImageSrc } from "@/lib/api";
-import { uploadFile } from "@/lib/upload";
+import { uploadFile, type UploadProgress } from "@/lib/upload";
+
+function formatBytes(bytes: number): string {
+  if (!bytes) return "";
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
 
 interface MultiUploadInputProps {
   name: string;
@@ -17,6 +23,7 @@ export default function MultiUploadInput({
 }: MultiUploadInputProps) {
   const [urls, setUrls] = useState<string[]>(defaultValue);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState<UploadProgress | null>(null);
   const [error, setError] = useState("");
 
   function update(next: string[]) {
@@ -48,14 +55,16 @@ export default function MultiUploadInput({
     if (!file) return;
     setUploading(true);
     setError("");
+    setProgress({ percent: 0, loadedBytes: 0, totalBytes: file.size });
 
     try {
-      const url = await uploadFile(file);
+      const url = await uploadFile(file, setProgress);
       addUrl(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
+      setProgress(null);
       e.target.value = "";
     }
   }
@@ -76,6 +85,21 @@ export default function MultiUploadInput({
       </div>
 
       <input id={name} type="hidden" name={name} value={JSON.stringify(urls)} readOnly />
+
+      {uploading && progress && (
+        <div className="mt-3">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+            <div
+              className="h-2 rounded-full bg-gold-500 transition-[width] duration-150"
+              style={{ width: `${Math.max(4, progress.percent)}%` }}
+            />
+          </div>
+          <p className="mt-1 text-xs font-semibold text-gray-600">
+            {progress.percent}% · {formatBytes(progress.loadedBytes)} /{" "}
+            {formatBytes(progress.totalBytes)}
+          </p>
+        </div>
+      )}
 
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 

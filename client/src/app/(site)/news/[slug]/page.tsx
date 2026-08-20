@@ -8,13 +8,20 @@ import PageHeader from "@/components/site/PageHeader";
 import SiteImage from "@/components/site/SiteImage";
 import { IconBookOpen, IconArrowLeft } from "@/lib/icons";
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+const formatDate = (value: string) => {
+  const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(value);
+  return new Date(isDateOnly ? `${value}T00:00:00` : value).toLocaleDateString(
+    "en-GB",
+    {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }
+  );
+};
+
+const lessonDateOf = (item: NewsItem) => item.lessonDate || item.createdAt;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -56,7 +63,7 @@ export default async function NewsDetailPage({ params }: Props) {
             >
               {label}
             </span>
-            <time dateTime={item.createdAt}>{formatDate(item.createdAt)}</time>
+            <time dateTime={item.createdAt}>{formatDate(lessonDateOf(item))}</time>
             {item.author && (
               <span>{t("newsDetail.by", { author: item.author })}</span>
             )}
@@ -135,7 +142,7 @@ export default async function NewsDetailPage({ params }: Props) {
                         </span>
                         <span className="mt-0.5 block text-xs text-gray-500">
                           {readingLabel(t, r.type, r.category)} ·{" "}
-                          {formatDate(r.createdAt)}
+                          {formatDate(lessonDateOf(r))}
                         </span>
                       </span>
                       <span className="font-display text-xs font-bold uppercase tracking-wide text-gold-600">

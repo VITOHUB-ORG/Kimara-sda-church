@@ -11,24 +11,35 @@ import {
 } from "@/lib/readings";
 import { IconArrowRight, IconBookOpen } from "@/lib/icons";
 
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("en-GB", {
+/** Local `YYYY-MM-DD` for a date-ish value (ISO string or plain date). */
+function toDayKey(value?: string): string {
+  if (!value) return "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+const formatLongDate = (key: string) =>
+  new Date(`${key}T00:00:00`).toLocaleDateString("en-GB", {
+    weekday: "long",
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 
-function DateChip({ iso }: { iso: string }) {
-  const date = new Date(iso);
-  const day = date.getDate();
-  const month = date.toLocaleDateString("en-GB", { month: "short" });
+function DateChip({ key }: { key: string }) {
+  const day = Number(key.split("-")[2]);
+  const monthShort = new Date(`${key}T00:00:00`)
+    .toLocaleDateString("en-GB", { month: "short" });
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl bg-white/95 px-4 py-2 text-center shadow-lg">
+    <div className="flex shrink-0 flex-col items-center justify-center rounded-xl border border-gray-100 bg-navy-50 px-4 py-2 text-center">
       <span className="font-display text-2xl font-black leading-none text-navy-900">
         {day}
       </span>
       <span className="mt-0.5 text-[10px] font-bold uppercase tracking-widest text-gold-600">
-        {month}
+        {monthShort}
       </span>
     </div>
   );
@@ -81,7 +92,7 @@ function ReadingCard({ item, t }: CardProps) {
         </h3>
         <p className="mt-2 flex-1 text-sm text-gray-600 line-clamp-3">{item.excerpt}</p>
         <div className="mt-4 flex items-center justify-between gap-2 text-xs text-gray-500">
-          <span className="truncate">{item.author || formatDate(item.createdAt)}</span>
+          <span className="truncate">{item.author || formatLongDate(toDayKey(item.lessonDate))}</span>
           <span className="shrink-0 font-semibold text-gray-400">
             {t("readings.minRead", { min: String(readingMinutes(item.content)) })}
           </span>
@@ -98,13 +109,22 @@ function ReadingCard({ item, t }: CardProps) {
   );
 }
 
+interface DayGroup {
+  key: string;
+  items: NewsItem[];
+}
+
 /**
- * Daily lessons library: the newest lesson is featured as "Today's Lesson",
- * then each category (Lesoni / Bobea / Kesha) gets its own section.
+ * Daily lessons library — every lesson is aligned to the date it belongs to
+ * (the `lessonDate` chosen in the admin), newest day first. There is no
+ * separate "latest uploaded" hero: each day is a clearly labelled section so
+ * visitors instantly recognise the content for any specific day.
  */
 export default async function ReadingsFeed() {
   const { t } = await getI18n();
-  const data = await apiGet<Paginated<NewsItem>>("/api/public/news?limit=100").catch(() => null);
+  const data = await apiGet<Paginated<NewsItem>>(
+    "/api/public/news?limit=100&sort=-lessonDate"
+  ).catch(() => null);
   const items = (data?.items ?? []).filter(
     (i) => i.published !== false && READING_TYPES.some((r) => r.value === i.type)
   );
@@ -118,93 +138,50 @@ export default async function ReadingsFeed() {
     );
   }
 
-  const today = items[0];
-  const todayMeta = readingMeta(today.type);
-  const todayLabel = readingLabel(t, today.type, today.category);
-  const rest = items.filter((i) => i._id !== today._id);
+  const groups: DayGroup[] = [];
+  for (const item of items) {
+    const key = toDayKey(item.lessonDate) || toDayKey(item.createdAt);
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) last.items.push(item);
+    else groups.push({ key, items: [item] });
+  }
+
+  const todayKey = toDayKey(new Date().toISOString());
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      {/* Today's Lesson hero */}
-      <section aria-label={t("readings.todayTitle")}>
-        <Link
-          href={`/news/${today.slug || today._id}`}
-          className="group relative block overflow-hidden rounded-3xl shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold-500"
+      {groups.map((group) => (
+        <section
+          key={group.key}
+          aria-label={formatLongDate(group.key)}
+          className="mt-14 first:mt-0 sm:mt-16"
         >
-          <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[21/9]">
-            {today.image ? (
-              <SiteImage
-                src={today.image}
-                alt={today.title}
-                priority
-                sizes="100vw"
-                className="transition-transform duration-500 ease-out group-hover:scale-[1.02]"
-              />
-            ) : (
-              <PlaceholderIcon />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/40 to-transparent" />
-            <div className="absolute left-5 top-5 z-10">
-              <DateChip iso={today.createdAt} />
-            </div>
-            <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 lg:p-10">
-              <p className="font-display text-xs font-bold uppercase tracking-[0.25em] text-gold-400">
-                {t("readings.todayTitle")}
+          <div className="flex items-center gap-4 border-b-2 border-navy-900 pb-3">
+            <DateChip key={group.key} />
+            <div className="min-w-0">
+              <h2 className="font-display text-lg font-extrabold uppercase tracking-[0.15em] text-navy-900 sm:text-xl">
+                {formatLongDate(group.key)}
+              </h2>
+              <p className="mt-0.5 text-xs font-semibold text-gray-500">
+                {t(
+                  group.items.length === 1 ? "readings.lesson" : "readings.lessons",
+                  { count: String(group.items.length) }
+                )}
               </p>
-              <span
-                className={`mt-3 inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${todayMeta?.badge ?? "bg-white/15 text-white"}`}
-              >
-                {todayLabel}
-              </span>
-              <h2 className="mt-2 max-w-3xl font-display text-2xl font-extrabold leading-tight text-white text-balance sm:text-3xl lg:text-4xl">
-                {today.title}
-              </h2>
-              {today.excerpt && (
-                <p className="mt-2 max-w-2xl line-clamp-2 text-sm text-navy-100 sm:text-base">
-                  {today.excerpt}
-                </p>
-              )}
-              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-navy-100 sm:text-sm">
-                <time dateTime={today.createdAt}>{formatDate(today.createdAt)}</time>
-                <span aria-hidden="true">·</span>
-                <span>{today.author}</span>
-                <span aria-hidden="true">·</span>
-                <span>
-                  {t("readings.minRead", { min: String(readingMinutes(today.content)) })}
-                </span>
-              </div>
-              <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-2.5 font-display text-sm font-bold uppercase tracking-wide text-navy-900 transition-colors group-hover:bg-gold-400">
-                {t("readings.readNow")}
-                <IconArrowRight className="h-4 w-4" />
-              </span>
             </div>
+            {group.key === todayKey && (
+              <span className="ml-auto shrink-0 rounded-full bg-gold-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-navy-900">
+                {t("readings.today")}
+              </span>
+            )}
           </div>
-        </Link>
-      </section>
-
-      {/* Category sections */}
-      {READING_TYPES.map((type) => {
-        const group = rest.filter((i) => i.type === type.value).slice(0, 3);
-        if (group.length === 0) return null;
-        return (
-          <section key={type.value} className="mt-14 sm:mt-16" aria-labelledby={`reading-${type.value}`}>
-            <div className="flex items-center gap-3">
-              <span className={`h-2.5 w-2.5 rounded-full ${type.dot}`} aria-hidden="true" />
-              <h2
-                id={`reading-${type.value}`}
-                className="border-b-2 border-navy-900 pb-1 font-display text-xl font-extrabold uppercase tracking-[0.15em] text-navy-900"
-              >
-                {t(type.labelKey)}
-              </h2>
-            </div>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {group.map((item) => (
-                <ReadingCard key={item._id} item={item} t={t} />
-              ))}
-            </div>
-          </section>
-        );
-      })}
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {group.items.map((item) => (
+              <ReadingCard key={item._id} item={item} t={t} />
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

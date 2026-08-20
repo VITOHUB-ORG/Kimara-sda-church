@@ -7,6 +7,7 @@ interface News {
   title: string;
   type: string;
   category: string;
+  lessonDate: string;
   author: string;
   published: boolean;
   createdAt: string;
@@ -31,6 +32,7 @@ const fields: Field[] = [
     ],
   },
   { name: "bibleText", label: "Bible Text (reference)", type: "text", placeholder: "e.g. Isaiah 41:10" },
+  { name: "lessonDate", label: "Lesson Date", type: "date", placeholder: "YYYY-MM-DD" },
   { name: "author", label: "Author", type: "text" },
   { name: "excerpt", label: "Excerpt", type: "textarea" },
   { name: "content", label: "Content", type: "textarea" },
@@ -45,12 +47,14 @@ const columns: Column<News>[] = [
     label: "Type",
     render: (item) => typeLabels[item.type] || item.type || item.category || "—",
   },
-  { key: "author", label: "Author" },
   {
-    key: "createdAt",
-    label: "Date",
-    render: (item) => new Date(item.createdAt).toLocaleDateString("en-GB"),
+    key: "lessonDate",
+    label: "Lesson Date",
+    render: (item) =>
+      item.lessonDate ||
+      new Date(item.createdAt).toLocaleDateString("en-GB"),
   },
+  { key: "author", label: "Author" },
   {
     key: "published",
     label: "Published",

@@ -45,6 +45,17 @@ interface ManagerProps<T extends object> {
 const get = (item: object, key: string): unknown =>
   (item as Record<string, unknown>)[key];
 
+/** Convert any date-ish value to a `YYYY-MM-DD` string for `<input type="date">`. */
+function toDateInputValue(raw: unknown): string {
+  if (!raw) return "";
+  const text = String(raw);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+  const d = new Date(text);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 function renderValue<T extends object>(
   item: T,
   col: Column<T>
@@ -123,7 +134,7 @@ export default function Manager<T extends object>({
           value = [];
         }
       }
-      if (field.type === "date" || field.type === "datetime") {
+      if (field.type === "datetime") {
         value = el.value ? new Date(el.value).toISOString() : "";
       }
       if (value === "") value = undefined;
@@ -160,7 +171,12 @@ export default function Manager<T extends object>({
 
   function renderField(field: Field, current: T | "new") {
     const rawValue = current === "new" ? undefined : get(current, field.name);
-    const value = rawValue === undefined ? "" : String(rawValue);
+    const value =
+      field.type === "date"
+        ? toDateInputValue(rawValue)
+        : rawValue === undefined
+          ? ""
+          : String(rawValue);
     const common = "w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none transition focus:border-gold-500 focus:ring-2 focus:ring-gold-100";
 
     if (field.type === "image") {

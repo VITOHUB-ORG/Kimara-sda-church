@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { normalizeImageSrc } from "@/lib/api";
-import { uploadFile } from "@/lib/upload";
+import { uploadFile, type UploadProgress } from "@/lib/upload";
 import { IconFile } from "@/lib/icons";
 
 interface UploadInputProps {
@@ -10,6 +10,12 @@ interface UploadInputProps {
   defaultValue?: string;
   accept?: string;
   label?: string;
+}
+
+function formatBytes(bytes: number): string {
+  if (!bytes) return "";
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
 }
 
 export default function UploadInput({
@@ -20,6 +26,7 @@ export default function UploadInput({
 }: UploadInputProps) {
   const [url, setUrl] = useState(defaultValue);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState<UploadProgress | null>(null);
   const [error, setError] = useState("");
   const isImage = accept.startsWith("image/");
 
@@ -28,14 +35,16 @@ export default function UploadInput({
     if (!file) return;
     setUploading(true);
     setError("");
+    setProgress({ percent: 0, loadedBytes: 0, totalBytes: file.size });
 
     try {
-      const url = await uploadFile(file);
+      const url = await uploadFile(file, setProgress);
       setUrl(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);
+      setProgress(null);
       e.target.value = "";
     }
   }
@@ -43,7 +52,7 @@ export default function UploadInput({
   return (
     <div>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-navy-900 bg-navy-900 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-navy-800">
+        <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-navy-900 bg-navy-900 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-navy-800 disabled:opacity-60">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
             <polyline points="17 8 12 3 7 8" />
@@ -54,6 +63,7 @@ export default function UploadInput({
             type="file"
             accept={accept}
             onChange={handleFile}
+            disabled={uploading}
             className="hidden"
           />
         </label>
@@ -61,6 +71,21 @@ export default function UploadInput({
           {isImage ? "JPG, PNG, WEBP, GIF (max 30MB)" : "PDF (max 30MB)"}
         </span>
       </div>
+
+      {uploading && progress && (
+        <div className="mt-3">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+            <div
+              className="h-2 rounded-full bg-gold-500 transition-[width] duration-150"
+              style={{ width: `${Math.max(4, progress.percent)}%` }}
+            />
+          </div>
+          <p className="mt-1 text-xs font-semibold text-gray-600">
+            {progress.percent}% · {formatBytes(progress.loadedBytes)} /{" "}
+            {formatBytes(progress.totalBytes)}
+          </p>
+        </div>
+      )}
 
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
 
