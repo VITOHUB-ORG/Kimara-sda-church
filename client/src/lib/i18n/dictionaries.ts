@@ -117,7 +117,6 @@ const en = {
       testimonies: "Testimonies",
       prayer: "Prayer Requests",
       contact: "Contact",
-      church: "Church Information",
       privacy: "Privacy",
     },
     bottomChurch: "Seventh-day Adventist Church · Youth Department · Kimara",
@@ -482,7 +481,7 @@ const sw: Dictionary = {
       testimonies: "Ushuhuda",
       prayer: "Maombi",
       contact: "Wasiliana",
-      church: "Taarifa za Kanisa",
+     
       privacy: "Faragha",
     },
     bottomChurch: "Kanisa la Seventh-day Adventist · Idara ya Vijana · Kimara",
