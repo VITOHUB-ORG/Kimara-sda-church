@@ -42,10 +42,10 @@ export default async function Hero() {
               {t("hero.events")}
             </Link>
             <Link
-              href="/resources"
+              href="/news"
               className="rounded-full border-2 border-white/30 px-7 py-3 text-center font-display text-sm font-bold uppercase tracking-wide text-white transition-colors hover:border-white hover:bg-white/10"
             >
-              {t("hero.resources")}
+              {t("hero.dailyLessons")}
             </Link>
           </div>
         </div>

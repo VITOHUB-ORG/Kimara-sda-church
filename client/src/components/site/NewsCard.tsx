@@ -1,5 +1,6 @@
 import type { NewsItem } from "@/lib/types";
 import { getI18n } from "@/lib/i18n/server";
+import { readingLabel, readingMeta } from "@/lib/readings";
 import Link from "next/link";
 import SiteImage from "./SiteImage";
 
@@ -12,6 +13,8 @@ const formatDate = (iso: string) =>
 
 export default async function NewsCard({ item }: { item: NewsItem }) {
   const { t } = await getI18n();
+  const meta = readingMeta(item.type);
+  const label = readingLabel(t, item.type, item.category);
   return (
     <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
       <div className="relative aspect-[16/9] w-full overflow-hidden">
@@ -31,8 +34,10 @@ export default async function NewsCard({ item }: { item: NewsItem }) {
       </div>
       <div className="p-6">
         <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span className="rounded-full bg-navy-100 px-3 py-1 font-semibold text-navy-800">
-            {item.category}
+          <span
+            className={`rounded-full px-3 py-1 font-semibold ${meta?.badge ?? "bg-navy-100 text-navy-800"}`}
+          >
+            {label}
           </span>
           <time>{formatDate(item.createdAt)}</time>
         </div>

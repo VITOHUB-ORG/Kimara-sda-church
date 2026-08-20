@@ -5,15 +5,34 @@ import Manager, { type Field, type Column } from "@/components/admin/Manager";
 interface News {
   _id: string;
   title: string;
+  type: string;
   category: string;
   author: string;
   published: boolean;
   createdAt: string;
 }
 
+const typeLabels: Record<string, string> = {
+  lesoni: "Bible Study Guide",
+  bobea: "Youth Lesson",
+  kesha: "Morning Devotional",
+  announcement: "Announcement",
+};
+
 const fields: Field[] = [
   { name: "title", label: "Title", type: "text", required: true },
-  { name: "category", label: "Category", type: "text", placeholder: "Announcement / Report" },
+  {
+    name: "type",
+    label: "Reading Type",
+    type: "select",
+    options: [
+      { value: "lesoni", label: "Bible Study Guide (Lesoni)" },
+      { value: "bobea", label: "Youth Lesson (Bobea)" },
+      { value: "kesha", label: "Morning Devotional (Kesha la Asubuhi)" },
+      { value: "announcement", label: "Announcement" },
+    ],
+  },
+  { name: "bibleText", label: "Bible Text (reference)", type: "text", placeholder: "e.g. Isaiah 41:10" },
   { name: "author", label: "Author", type: "text" },
   { name: "excerpt", label: "Excerpt", type: "textarea" },
   { name: "content", label: "Content", type: "textarea" },
@@ -23,7 +42,11 @@ const fields: Field[] = [
 
 const columns: Column<News>[] = [
   { key: "title", label: "Title" },
-  { key: "category", label: "Category" },
+  {
+    key: "type",
+    label: "Type",
+    render: (item) => typeLabels[item.type] || item.type || item.category || "—",
+  },
   { key: "author", label: "Author" },
   {
     key: "createdAt",
@@ -40,8 +63,8 @@ const columns: Column<News>[] = [
 export default function NewsAdminPage() {
   return (
     <Manager<News>
-      title="News"
-      description="Manage news articles and announcements."
+      title="Daily Lessons"
+      description="Post daily Bible study guides (Lesoni), youth lessons (Bobea) and morning devotionals (Kesha la Asubuhi)."
       resource="/api/admin/news"
       columns={columns}
       fields={fields}

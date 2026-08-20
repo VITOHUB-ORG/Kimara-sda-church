@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { API_URL, normalizeImageSrc } from "@/lib/api";
-import { getToken } from "@/lib/admin";
+import { normalizeImageSrc } from "@/lib/api";
+import { uploadFile } from "@/lib/upload";
 
 interface MultiUploadInputProps {
   name: string;
@@ -18,7 +18,6 @@ export default function MultiUploadInput({
   const [urls, setUrls] = useState<string[]>(defaultValue);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
-  const maxBytes = 30 * 1024 * 1024;
 
   function update(next: string[]) {
     setUrls(next);
@@ -50,25 +49,9 @@ export default function MultiUploadInput({
     setUploading(true);
     setError("");
 
-    if (file.size > maxBytes) {
-      setError("File too large. Maximum size is 30MB.");
-      setUploading(false);
-      e.target.value = "";
-      return;
-    }
-
-    const form = new FormData();
-    form.append("file", file);
-
     try {
-      const res = await fetch(`${API_URL}/api/upload`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${getToken()}` },
-        body: form,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Upload failed");
-      addUrl(data.url);
+      const url = await uploadFile(file);
+      addUrl(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { API_URL, normalizeImageSrc } from "@/lib/api";
-import { getToken, refreshAccessToken } from "@/lib/admin";
+import { normalizeImageSrc } from "@/lib/api";
+import { uploadFile } from "@/lib/upload";
 import { IconFile } from "@/lib/icons";
 
 interface UploadInputProps {
@@ -22,7 +22,6 @@ export default function UploadInput({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const isImage = accept.startsWith("image/");
-  const maxBytes = 30 * 1024 * 1024;
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -30,32 +29,9 @@ export default function UploadInput({
     setUploading(true);
     setError("");
 
-    if (file.size > maxBytes) {
-      setError("File too large. Maximum size is 30MB.");
-      setUploading(false);
-      e.target.value = "";
-      return;
-    }
-
-    const form = new FormData();
-    form.append("file", file);
-
     try {
-      let res = await fetch(`${API_URL}/api/upload`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${getToken()}` },
-        body: form,
-      });
-      if (res.status === 401 && (await refreshAccessToken())) {
-        res = await fetch(`${API_URL}/api/upload`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${getToken()}` },
-          body: form,
-        });
-      }
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Upload failed");
-      setUrl(data.url);
+      const url = await uploadFile(file);
+      setUrl(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

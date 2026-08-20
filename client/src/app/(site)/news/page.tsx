@@ -1,28 +1,28 @@
 import { Suspense } from "react";
 import { getI18n } from "@/lib/i18n/server";
 import PageHeader from "@/components/site/PageHeader";
-import NewsFeed from "@/components/site/NewsFeed";
+import ReadingsFeed from "@/components/site/ReadingsFeed";
 import EditorialSkeleton from "@/components/site/EditorialSkeleton";
 
 export const metadata = {
-  title: "News",
+  title: "Daily Lessons",
   description:
-    "Official updates, announcements and reports from the SDA Youth Ministry.",
+    "Daily Bible study guides (Lesoni), youth lessons (Bobea) and morning devotionals (Kesha la Asubuhi) to help you grow in faith.",
 };
 
-export default async function NewsPage() {
+export default async function ReadingsPage() {
   const { t } = await getI18n();
 
   return (
     <>
       <PageHeader
-        eyebrow={t("newsPage.eyebrow")}
-        title={t("newsPage.title")}
-        description={t("newsPage.desc")}
+        eyebrow={t("readings.eyebrow")}
+        title={t("readings.title")}
+        description={t("readings.desc")}
       />
-      <section className="bg-white py-12 sm:py-16">
+      <section className="bg-white py-14 sm:py-20">
         <Suspense fallback={<EditorialSkeleton />}>
-          <NewsFeed />
+          <ReadingsFeed />
         </Suspense>
       </section>
     </>

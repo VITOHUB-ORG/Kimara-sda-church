@@ -182,8 +182,17 @@ export function IconMic(props: IconProps) {
 export function IconArrowLeft(props: IconProps) {
   return (
     <svg {...base} {...props}>
-      <line x1="19" y1="12" x2="5" y2="12" />
+      <path d="M19 12H5" />
       <polyline points="12 19 5 12 12 5" />
+    </svg>
+  );
+}
+
+export function IconLink(props: IconProps) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
     </svg>
   );
 }
