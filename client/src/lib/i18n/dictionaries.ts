@@ -291,7 +291,7 @@ const en = {
     channelsTitle: "Official Communication Channels",
     channels: [
       { title: "Youth Director", detail: "Office hours by appointment" },
-      { title: "Church Location", detail: "Seventh-day Adventist Church" },
+      { title: "Church Location", detail: "Kimara Seventh-day Adventist Church" },
       { title: "Sabbath School", detail: "Every Sabbath, 9:15 AM" },
       { title: "Youth Services", detail: "Every Sabbath afternoon" },
     ],
@@ -656,7 +656,7 @@ const sw: Dictionary = {
     channelsTitle: "Njia Rasmi za Mawasiliano",
     channels: [
       { title: "Mkurugenzi wa Vijana", detail: "Ofisi kwa miadi" },
-      { title: "Mahali pa Kanisa", detail: "Kanisa la Seventh-day Adventist" },
+      { title: "Mahali pa Kanisa", detail: "Kanisa la Wadventista Wasabato Kimara" },
       { title: "Shule ya Sabato", detail: "Kila Sabato, 9:15 ASB" },
       { title: "Huduma za Vijana", detail: "Kila Sabato mchana" },
     ],
